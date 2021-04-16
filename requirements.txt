@@ -1,0 +1,4 @@
+psycopg2==2.8.6
+SQLAlchemy==1.4.8
+# Editable Git install with no remote (steampipe-alchemy==0.1.0)
+-e /Users/ryangerstenkorn/Code/steampipe_alchemy

@@ -1,0 +1,45 @@
+from sqlalchemy import Column
+from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
+from sqlalchemy.dialects import postgresql as psql
+
+from steampipe_alchemy.base import Base
+
+class AwsEc2NetworkInterface(Base):
+    __tablename__ = 'aws_ec2_network_interface'
+    network_interface_id = Column(Text, name='network_interface_id', nullable=True)
+    status = Column(Text, name='status', nullable=True)
+    interface_type = Column(Text, name='interface_type', nullable=True)
+    description = Column(Text, name='description', nullable=True)
+    availability_zone = Column(Text, name='availability_zone', nullable=True)
+    owner_id = Column(Text, name='owner_id', nullable=True)
+    association_allocation_id = Column(Text, name='association_allocation_id', nullable=True)
+    association_carrier_ip = Column(psql.INET, name='association_carrier_ip', nullable=True)
+    association_customer_owned_ip = Column(psql.INET, name='association_customer_owned_ip', nullable=True)
+    association_id = Column(Text, name='association_id', nullable=True)
+    association_ip_owner_id = Column(Text, name='association_ip_owner_id', nullable=True)
+    association_public_dns_name = Column(Text, name='association_public_dns_name', nullable=True)
+    association_public_ip = Column(psql.INET, name='association_public_ip', nullable=True)
+    attached_instance_id = Column(Text, name='attached_instance_id', nullable=True)
+    attached_instance_owner_id = Column(Text, name='attached_instance_owner_id', nullable=True)
+    attachment_id = Column(Text, name='attachment_id', nullable=True)
+    attachment_status = Column(Text, name='attachment_status', nullable=True)
+    attachment_time = Column(TIMESTAMP, name='attachment_time', nullable=True)
+    delete_on_instance_termination = Column(Boolean, name='delete_on_instance_termination', nullable=True)
+    device_index = Column(BigInteger, name='device_index', nullable=True)
+    mac_address = Column(Text, name='mac_address', nullable=True)
+    outpost_arn = Column(Text, name='outpost_arn', nullable=True)
+    private_dns_name = Column(Text, name='private_dns_name', nullable=True)
+    private_ip_address = Column(psql.INET, name='private_ip_address', nullable=True)
+    requester_id = Column(Text, name='requester_id', nullable=True)
+    requester_managed = Column(Boolean, name='requester_managed', nullable=True)
+    source_dest_check = Column(Boolean, name='source_dest_check', nullable=True)
+    groups = Column(JSON, name='groups', nullable=True)
+    ipv6_addresses = Column(JSON, name='ipv6_addresses', nullable=True)
+    private_ip_addresses = Column(JSON, name='private_ip_addresses', nullable=True)
+    tags_src = Column(JSON, name='tags_src', nullable=True)
+    title = Column(Text, name='title', primary_key=True, nullable=True)
+    tags = Column(JSON, name='tags', nullable=True)
+    akas = Column(JSON, name='akas', nullable=True)
+    partition = Column(Text, name='partition', nullable=True)
+    region = Column(Text, name='region', nullable=True)
+    account_id = Column(Text, name='account_id', nullable=True)
