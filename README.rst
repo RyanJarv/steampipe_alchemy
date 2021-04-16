@@ -51,6 +51,8 @@ Will produce the following output:
       Region: us-west-1
       Owner: example-prod-account
 
+Models are located in `steampipe_alchemy.models` and are automatically generated with `./scripts/generate_models.py`.
+
 Credits
 -------
 
