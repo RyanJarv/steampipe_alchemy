@@ -26,7 +26,29 @@ Python Boilerplate contains all the boilerplate you need to create a Python pack
 Features
 --------
 
-* TODO
+```
+from steampipe_alchemy import query
+from steampipe_alchemy.models import AwsS3Bucket
+
+for b in query(AwsS3Bucket).limit(3):
+    print(b.name)
+    print("  Region: " + b.region)
+    print("  Owner: " + str(b.acl['Owner']['DisplayName']))
+```
+
+Will produce the following output:
+
+```
+example-bucket-1234
+  Region: us-east-1
+  Owner: example-prod-account
+example-bucket-2345
+  Region: us-east-2
+  Owner: example-prod-account
+example-bucket-3456
+  Region: us-west-1
+  Owner: example-prod-account
+```
 
 Credits
 -------
