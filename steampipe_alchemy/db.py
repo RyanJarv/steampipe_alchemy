@@ -1,35 +1,45 @@
-from typing import TypeVar, Iterable, Union, Any, Generic
+import json
+import os
+import subprocess
+import atexit
+import tarfile
+import urllib.request
+import zipfile
+from pathlib import Path
 
-import sqlmypy
+from typing import TypeVar, Iterable, Union, Generic, List, Optional
 
 import sqlalchemy.orm
 import sqlalchemy.future
-from sqlalchemy.orm import Query
+from sqlalchemy import MetaData
+from sqlalchemy.future import Engine, create_engine
+from sqlalchemy.orm import Query, declarative_base, DeclarativeMeta
 
-from steampipe_alchemy.base import engine
+metadata = MetaData()
+Base: 'DeclarativeMeta' = declarative_base(metadata=metadata)
 
-Session: sqlalchemy.orm.sessionmaker = sqlalchemy.orm.sessionmaker(engine, future=True)
-db: sqlalchemy.orm.Session = Session()
+DATABASE_CONNECTION_PATH: Optional[str] = None
+engine: Optional[Engine] = None
 
 T = TypeVar('T')
+
 
 class Q(Generic[T], Query):
     """Wrapper around sqlalchemy.orm.Query that supports type annotations.
 
-    The Query object can be used as it self or as an iterable over the model. When used as an iterable it does not
-    provide autocomplete of the underlying class by default.
-
+    The Query object can be used as it self or as an iterable over the model. When used as an iterable
+    it does not provide autocomplete of the underlying class by default.
     i.e.
         for i in sess.query(Model).all():
             ...
 
-    Here i will be an object of type Model but because of the dynamic nature of sqlalchemy we need to add a type hint to
-    get completion to work correctly.
+    Here i will be an object of type Model but because of the dynamic nature of sqlalchemy we need to
+    add a type hint to get completion to work correctly.
 
         i:  Model
 
-    Putting this everywhere is kinda a pain though, so instead this class can be used with a custom query method (below) to
-    automatically set the right type.
+    Putting this everywhere is kinda a pain though, so instead this class can be used with a custom
+    query method (below) to automatically set the right type.
     """
     ...
 
@@ -96,7 +106,8 @@ class Q(Generic[T], Query):
     def execution_options(self, **kwargs) -> Union[Iterable[T], 'Q']:
         ...
 
-    def with_for_update(self, read=False, nowait=False, of=None, skip_locked=False, key_share=False) -> Union[Iterable[T], 'Q']:
+    def with_for_update(self, read=False, nowait=False, of=None, skip_locked=False, key_share=False) -> \
+            Union[Iterable[T], 'Q']:
         ...
 
     def params(self, *args, **kwargs) -> Union[Iterable[T], 'Q']:
@@ -141,4 +152,83 @@ def query(resource: T) -> Union[Iterable[T], Q[T]]:
     return db.query(resource)
 
 
+home_dir = Path('~/.local/share/steampipe_alchemy').expanduser().absolute()
+bin_dir = Path('~/.local/share/steampipe_alchemy/bin').expanduser().absolute()
 
+
+def update_config(aws_regions: List[str]):
+    Path(home_dir / 'config/aws.spc').write_text(f"""
+        connection "aws" {{
+            plugin = "aws"
+            regions = {str(aws_regions).replace("'", '"')}
+        }}
+    """)
+
+
+def start(**kwargs):
+    global engine, Session, db
+    out = subprocess.check_output(
+        [bin_dir / 'steampipe', 'service', 'start', '--install-dir', str(home_dir), '--database-listen', 'local'],
+        env={**os.environ, **kwargs},
+    )
+    atexit.register(stop)
+
+    DATABASE_CONNECTION_PATH = list(filter(lambda l: b'postgres://steampipe' in l, out.splitlines()))
+    DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH[0].decode().strip()
+
+    # sqlalchemy expects postgresql:// rather then postgres://
+    DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH.replace('postgres', 'postgresql')
+
+    engine = create_engine(DATABASE_CONNECTION_PATH)
+    Session = sqlalchemy.orm.sessionmaker(engine, future=True)
+    db = Session()
+
+
+def stop():
+    subprocess.check_output([bin_dir / 'steampipe', 'service', 'stop', '--install-dir', str(home_dir), '--force'])
+
+
+def get_latest() -> str:
+    resp = urllib.request.urlopen('https://api.github.com/repos/turbot/steampipe/releases/latest')
+    resp = json.loads(resp.read())
+    return resp['name']
+
+
+def install(plugins: List[str]):
+    os.makedirs(bin_dir, exist_ok=True)
+    if os.uname().sysname == 'Darwin':
+        get_darwin()
+    elif os.uname().sysname == 'Linux':
+        get_linux()
+    os.chmod(bin_dir / 'steampipe', mode=0o0775)
+
+    for plugin in plugins:
+        install_plugin(plugin)
+
+
+def install_plugin(plugin: str):
+    subprocess.check_output([bin_dir / 'steampipe', 'plugin', 'install', '--install-dir', str(home_dir), plugin])
+
+
+def get_linux():
+    ver = get_latest()
+    uri = f"https://github.com/turbot/steampipe/releases/download/{ver}/steampipe_linux_amd64.tar.gz"
+    resp = urllib.request.urlopen(uri)
+
+    with open(bin_dir / 'steampipe.tar.gz', 'wb') as f:
+        f.write(resp.read())
+
+    with tarfile.TarFile(bin_dir / 'steampipe.tar.gz', 'r') as z:
+        z.extractall(bin_dir)
+
+
+def get_darwin():
+    ver = get_latest()
+    uri = f"https://github.com/turbot/steampipe/releases/download/{ver}/steampipe_darwin_amd64.zip"
+    resp = urllib.request.urlopen(uri)
+
+    with open(bin_dir / 'steampipe.zip', 'wb') as f:
+        f.write(resp.read())
+
+    with zipfile.ZipFile(bin_dir / 'steampipe.zip', 'r') as z:
+        z.extractall(bin_dir)

@@ -16,15 +16,29 @@ steampipe-alchemy
 
 
 
-Python Boilerplate contains all the boilerplate you need to create a Python package.
+A simple `SQLAlchemy <https://www.sqlalchemy.org/>`_ wrapper around `Steampipe <https://steampipe.io/>`_.
 
+Currently this is a work in progress. Models exist for the AWS plugin, others will be added in the future.
 
 * Free software: BSD license
-* Documentation: https://steampipe-alchemy.readthedocs.io.
+* Documentation: [WIP] https://steampipe-alchemy.readthedocs.io.
 
 
 Features
 --------
+
+Install, setup, and start steampipe with the aws plugin.
+
+.. code-block:: python
+    
+    # We're assuming the the AWS credentials are set in the environment here.
+    from steampipe_alchemy as sa
+
+    sa.install(['aws'])  # Downloads and installs steampipe with the aws plugin.
+    sa.update_config(['us-east-1', 'us-east-2', 'us-west-1']) #  Modifies ~/.local/share/steampipe_alchemy/config/aws.spc
+    sa.start()  # Steampipe will be stopped when the script exits or when stop() is called.
+
+We can then use the SQLAlchemy models to query AWS.
 
 .. code-block:: python
 
@@ -37,9 +51,9 @@ Features
         print("  Owner: " + str(b.acl['Owner']['DisplayName']))
 
 
-Will produce the following output:
+Which will produce something like:
 
-.. code-block::
+.. code-block:: python
 
     example-bucket-1234
       Region: us-east-1
@@ -50,6 +64,12 @@ Will produce the following output:
     example-bucket-3456
       Region: us-west-1
       Owner: example-prod-account
+
+
+The function steampipe_alchemy.query is a small wrapper around sqlalchemy.orm.Query. It is setup to use the steampipe sqlalchemy session and has type annotations which enable IDE completion on both the Model results and the Query class.
+
+
+.. image:: https://raw.githubusercontent.com/RyanJarv/steampipe_alchemy/main/docs/images/completion.png
 
 Models are located in ``steampipe_alchemy.models`` and are automatically generated with ``./scripts/generate_models.py``.
 

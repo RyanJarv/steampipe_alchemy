@@ -2,7 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
 
-from steampipe_alchemy.base import Base
+from steampipe_alchemy import Base
 
 class AwsElasticBeanstalkApplication(Base):
     __tablename__ = 'aws_elastic_beanstalk_application'

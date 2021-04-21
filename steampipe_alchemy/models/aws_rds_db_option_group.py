@@ -2,7 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
 
-from steampipe_alchemy.base import Base
+from steampipe_alchemy import Base
 
 class AwsRdsDbOptionGroup(Base):
     __tablename__ = 'aws_rds_db_option_group'

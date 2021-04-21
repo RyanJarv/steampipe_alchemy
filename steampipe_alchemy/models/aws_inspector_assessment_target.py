@@ -2,7 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
 
-from steampipe_alchemy.base import Base
+from steampipe_alchemy import Base
 
 class AwsInspectorAssessmentTarget(Base):
     __tablename__ = 'aws_inspector_assessment_target'

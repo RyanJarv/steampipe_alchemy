@@ -31,10 +31,6 @@ RootDir = Path(__file__).parent.parent
 ModelsDir = (RootDir/Path('steampipe_alchemy/models'))
 ModelsDir.mkdir(exist_ok=True)
 
-# sess = boto3.Session()
-# services = sess.get_available_services()
-# print(services)
-
 
 def normalize_attr(name: str):
     name = name.replace('-', '_')
@@ -42,8 +38,10 @@ def normalize_attr(name: str):
         name = '_class'
     return name
 
+
 def snake_case(s: str) -> str:
     return ''.join(map(lambda p: p.capitalize(), s.split('_')))
+
 
 with engine.connect() as conn:
     result = conn.execute(text("""
@@ -65,7 +63,7 @@ from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
 
-from steampipe_alchemy.base import Base
+from steampipe_alchemy import Base
 
 class {snake_case(table)}(Base):
     __tablename__ = '{table}'

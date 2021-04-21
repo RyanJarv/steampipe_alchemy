@@ -12,6 +12,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = Path('requirements.txt').read_text().splitlines()
+requirements = list(filter(lambda p: not p.startswith('-e'), requirements))
 
 setup_requirements = ['pytest-runner', ]
 
@@ -36,6 +37,7 @@ setup(
     install_requires=requirements,
     license="BSD license",
     long_description=readme + '\n\n' + history,
+    long_description_content_type="text/x-rst",
     include_package_data=True,
     keywords='steampipe_alchemy',
     name='steampipe_alchemy',
@@ -44,6 +46,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/RyanJarv/steampipe_alchemy',
-    version='0.1.0',
+    version='0.1.3',
     zip_safe=False,
 )

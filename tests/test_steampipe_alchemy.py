@@ -4,21 +4,16 @@
 
 import pytest
 
-
-from steampipe_alchemy import lib
+from steampipe_alchemy import query, start, install, update_config
+from steampipe_alchemy.models import AwsVpc
 
 
 @pytest.fixture
-def response():
-    """Sample pytest fixture.
-
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
-    # import requests
-    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
+def setup():
+    install(['aws'])
+    update_config(aws_regions=['us-east-1', 'us-east-2', 'us-west-2', 'us-west-1'])
+    start()
 
 
-def test_content(response):
-    """Sample pytest test function with the pytest fixture as an argument."""
-    # from bs4 import BeautifulSoup
-    # assert 'GitHub' in BeautifulSoup(response.content).title.string
+def test_this(setup):
+    print(query(AwsVpc))

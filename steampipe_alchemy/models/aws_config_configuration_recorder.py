@@ -2,7 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
 
-from steampipe_alchemy.base import Base
+from steampipe_alchemy import Base
 
 class AwsConfigConfigurationRecorder(Base):
     __tablename__ = 'aws_config_configuration_recorder'
