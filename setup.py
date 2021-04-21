@@ -12,7 +12,6 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = Path('requirements.txt').read_text().splitlines()
-requirements = list(filter(lambda p: not p.startswith('-e'), requirements))
 
 setup_requirements = ['pytest-runner', ]
 
