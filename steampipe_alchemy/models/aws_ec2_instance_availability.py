@@ -6,8 +6,8 @@ from steampipe_alchemy.base import Base
 
 class AwsEc2InstanceAvailability(Base):
     __tablename__ = 'aws_ec2_instance_availability'
-    instance_type = Column(Text, name='instance_type', nullable=True)
-    location = Column(Text, name='location', nullable=True)
-    location_type = Column(Text, name='location_type', nullable=True)
-    title = Column(Text, name='title', primary_key=True, nullable=True)
-    akas = Column(JSON, name='akas', nullable=True)
+    instance_type = Column(name='instance_type', type_=Text, nullable=True)
+    location = Column(name='location', type_=Text, nullable=True)
+    location_type = Column(name='location_type', type_=Text, nullable=True)
+    title = Column(name='title', type_=Text, primary_key=True, nullable=True)
+    akas = Column(name='akas', type_=JSON, nullable=True)

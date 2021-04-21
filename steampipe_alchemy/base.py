@@ -8,4 +8,4 @@ engine: Engine = create_engine(DATABASE_CONNECTION_PATH)
 
 metadata = MetaData()
 
-Base = declarative_base(metadata=metadata)
+Base: 'DeclarativeMeta' = declarative_base(metadata=metadata)

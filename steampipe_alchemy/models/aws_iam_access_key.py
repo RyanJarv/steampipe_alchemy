@@ -6,12 +6,12 @@ from steampipe_alchemy.base import Base
 
 class AwsIamAccessKey(Base):
     __tablename__ = 'aws_iam_access_key'
-    access_key_id = Column(Text, name='access_key_id', nullable=True)
-    user_name = Column(Text, name='user_name', nullable=True)
-    status = Column(Text, name='status', nullable=True)
-    create_date = Column(TIMESTAMP, name='create_date', nullable=True)
-    title = Column(Text, name='title', primary_key=True, nullable=True)
-    akas = Column(JSON, name='akas', nullable=True)
-    partition = Column(Text, name='partition', nullable=True)
-    region = Column(Text, name='region', nullable=True)
-    account_id = Column(Text, name='account_id', nullable=True)
+    access_key_id = Column(name='access_key_id', type_=Text, nullable=True)
+    user_name = Column(name='user_name', type_=Text, nullable=True)
+    status = Column(name='status', type_=Text, nullable=True)
+    create_date = Column(name='create_date', type_=TIMESTAMP, nullable=True)
+    title = Column(name='title', type_=Text, primary_key=True, nullable=True)
+    akas = Column(name='akas', type_=JSON, nullable=True)
+    partition = Column(name='partition', type_=Text, nullable=True)
+    region = Column(name='region', type_=Text, nullable=True)
+    account_id = Column(name='account_id', type_=Text, nullable=True)

@@ -6,13 +6,13 @@ from steampipe_alchemy.base import Base
 
 class AwsVpcInternetGateway(Base):
     __tablename__ = 'aws_vpc_internet_gateway'
-    internet_gateway_id = Column(Text, name='internet_gateway_id', nullable=True)
-    owner_id = Column(Text, name='owner_id', nullable=True)
-    attachments = Column(JSON, name='attachments', nullable=True)
-    tags_src = Column(JSON, name='tags_src', nullable=True)
-    tags = Column(JSON, name='tags', nullable=True)
-    title = Column(Text, name='title', primary_key=True, nullable=True)
-    akas = Column(JSON, name='akas', nullable=True)
-    partition = Column(Text, name='partition', nullable=True)
-    region = Column(Text, name='region', nullable=True)
-    account_id = Column(Text, name='account_id', nullable=True)
+    internet_gateway_id = Column(name='internet_gateway_id', type_=Text, nullable=True)
+    owner_id = Column(name='owner_id', type_=Text, nullable=True)
+    attachments = Column(name='attachments', type_=JSON, nullable=True)
+    tags_src = Column(name='tags_src', type_=JSON, nullable=True)
+    tags = Column(name='tags', type_=JSON, nullable=True)
+    title = Column(name='title', type_=Text, primary_key=True, nullable=True)
+    akas = Column(name='akas', type_=JSON, nullable=True)
+    partition = Column(name='partition', type_=Text, nullable=True)
+    region = Column(name='region', type_=Text, nullable=True)
+    account_id = Column(name='account_id', type_=Text, nullable=True)

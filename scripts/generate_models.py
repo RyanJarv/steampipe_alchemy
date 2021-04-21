@@ -1,4 +1,5 @@
-"""Main module."""
+#!/usr/bin/env python3
+
 from pathlib import Path
 
 from sqlalchemy import MetaData, text, create_engine
@@ -116,11 +117,11 @@ class {snake_case(table)}(Base):
         for name, type, _ in columns:
             if name == primary_key or ((primary_key is list) and primary_key in list):
                 row = f"""
-    {normalize_attr(name)} = Column({type_mapping[type]}, name='{name}', primary_key=True, nullable=True)
+    {normalize_attr(name)} = Column(name='{name}', type_={type_mapping[type]}, primary_key=True, nullable=True)
                 """
             else:
                 row = f"""
-    {normalize_attr(name)} = Column({type_mapping[type]}, name='{name}', nullable=True)
+    {normalize_attr(name)} = Column(name='{name}', type_={type_mapping[type]}, nullable=True)
                 """
 
             template += row.lstrip('\t ').rstrip('\n\t ')

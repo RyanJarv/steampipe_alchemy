@@ -6,13 +6,13 @@ from steampipe_alchemy.base import Base
 
 class AwsIamPolicySimulator(Base):
     __tablename__ = 'aws_iam_policy_simulator'
-    principal_arn = Column(Text, name='principal_arn', primary_key=True, nullable=True)
-    action = Column(Text, name='action', nullable=True)
-    resource_arn = Column(Text, name='resource_arn', nullable=True)
-    decision = Column(Text, name='decision', nullable=True)
-    decision_details = Column(JSON, name='decision_details', nullable=True)
-    matched_statements = Column(JSON, name='matched_statements', nullable=True)
-    missing_context_values = Column(JSON, name='missing_context_values', nullable=True)
-    resource_specific_results = Column(JSON, name='resource_specific_results', nullable=True)
-    organizations_decision_detail = Column(JSON, name='organizations_decision_detail', nullable=True)
-    permissions_boundary_decision_detail = Column(JSON, name='permissions_boundary_decision_detail', nullable=True)
+    principal_arn = Column(name='principal_arn', type_=Text, primary_key=True, nullable=True)
+    action = Column(name='action', type_=Text, nullable=True)
+    resource_arn = Column(name='resource_arn', type_=Text, nullable=True)
+    decision = Column(name='decision', type_=Text, nullable=True)
+    decision_details = Column(name='decision_details', type_=JSON, nullable=True)
+    matched_statements = Column(name='matched_statements', type_=JSON, nullable=True)
+    missing_context_values = Column(name='missing_context_values', type_=JSON, nullable=True)
+    resource_specific_results = Column(name='resource_specific_results', type_=JSON, nullable=True)
+    organizations_decision_detail = Column(name='organizations_decision_detail', type_=JSON, nullable=True)
+    permissions_boundary_decision_detail = Column(name='permissions_boundary_decision_detail', type_=JSON, nullable=True)

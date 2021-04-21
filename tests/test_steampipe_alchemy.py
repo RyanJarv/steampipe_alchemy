@@ -5,7 +5,7 @@
 import pytest
 
 
-from steampipe_alchemy import steampipe_alchemy
+from steampipe_alchemy import lib
 
 
 @pytest.fixture

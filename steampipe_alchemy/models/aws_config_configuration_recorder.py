@@ -6,13 +6,13 @@ from steampipe_alchemy.base import Base
 
 class AwsConfigConfigurationRecorder(Base):
     __tablename__ = 'aws_config_configuration_recorder'
-    name = Column(Text, name='name', primary_key=True, nullable=True)
-    recording_group = Column(JSON, name='recording_group', nullable=True)
-    role_arn = Column(Text, name='role_arn', nullable=True)
-    status_recording = Column(Boolean, name='status_recording', nullable=True)
-    status = Column(JSON, name='status', nullable=True)
-    akas = Column(JSON, name='akas', nullable=True)
-    title = Column(Text, name='title', nullable=True)
-    partition = Column(Text, name='partition', nullable=True)
-    region = Column(Text, name='region', nullable=True)
-    account_id = Column(Text, name='account_id', nullable=True)
+    name = Column(name='name', type_=Text, primary_key=True, nullable=True)
+    recording_group = Column(name='recording_group', type_=JSON, nullable=True)
+    role_arn = Column(name='role_arn', type_=Text, nullable=True)
+    status_recording = Column(name='status_recording', type_=Boolean, nullable=True)
+    status = Column(name='status', type_=JSON, nullable=True)
+    akas = Column(name='akas', type_=JSON, nullable=True)
+    title = Column(name='title', type_=Text, nullable=True)
+    partition = Column(name='partition', type_=Text, nullable=True)
+    region = Column(name='region', type_=Text, nullable=True)
+    account_id = Column(name='account_id', type_=Text, nullable=True)
