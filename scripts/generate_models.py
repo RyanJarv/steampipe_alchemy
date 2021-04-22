@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import subprocess
 from pathlib import Path
 
 from sqlalchemy import MetaData, text, create_engine
@@ -125,3 +126,6 @@ class {snake_case(table)}(Base):
             template += row.lstrip('\t ').rstrip('\n\t ')
         f = (ModelsDir/Path(f'{table}.py'))
         f.write_text(template)
+
+
+subprocess.check_output(['git', 'apply', './patches/models.diff'])

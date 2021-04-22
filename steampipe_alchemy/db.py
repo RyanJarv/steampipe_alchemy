@@ -190,8 +190,6 @@ def status() -> (SteampipeStatus, str):
         status = SteampipeStatus.RUNNING
     else:
         raise UserWarning(f"Steampipe is in unknown state: {str(out)}")
-    if not set_db(out):
-        print("[WARN] Unable to setup db connection from steampipe status output", file=sys.stderr)
     return status, out
 
 
@@ -206,7 +204,7 @@ def set_db(status_out: bytes) -> bool:
     DATABASE_CONNECTION_PATH = list(filter(lambda l: b'postgres://steampipe' in l, status_out.splitlines()))
     try:
         DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH[0].decode().strip()
-    except KeyError:
+    except IndexError:
         return False
 
     # sqlalchemy expects postgresql:// rather then postgres://
