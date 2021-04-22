@@ -1,0 +1,27 @@
+diff --git a/steampipe_alchemy/models/aws_iam_user.py b/steampipe_alchemy/models/aws_iam_user.py
+index b5510f6..07836b2 100644
+--- a/steampipe_alchemy/models/aws_iam_user.py
++++ b/steampipe_alchemy/models/aws_iam_user.py
+@@ -1,8 +1,11 @@
++from typing import List
++
+ from sqlalchemy import Column
+-from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
+-from sqlalchemy.dialects import postgresql as psql
++from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP
+ 
+ from steampipe_alchemy import Base
++from steampipe_alchemy.types.policy import Policy
++
+ 
+ class AwsIamUser(Base):
+     __tablename__ = 'aws_iam_user'
+@@ -18,7 +21,7 @@ class AwsIamUser(Base):
+     mfa_devices = Column('mfa_devices', JSON, nullable=True)
+     groups = Column('groups', JSON, nullable=True)
+     inline_policies = Column('inline_policies', JSON, nullable=True)
+-    inline_policies_std = Column('inline_policies_std', JSON, nullable=True)
++    inline_policies_std: List[Policy] = Column('inline_policies_std', JSON, nullable=True)
+     attached_policy_arns = Column('attached_policy_arns', JSON, nullable=True)
+     tags_src = Column('tags_src', JSON, nullable=True)
+     tags = Column('tags', JSON, nullable=True)
