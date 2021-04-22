@@ -6,13 +6,13 @@ from steampipe_alchemy import Base
 
 class AwsDynamodbGlobalTable(Base):
     __tablename__ = 'aws_dynamodb_global_table'
-    global_table_name = Column(name='global_table_name', type_=Text, nullable=True)
-    global_table_arn = Column(name='global_table_arn', type_=Text, nullable=True)
-    global_table_status = Column(name='global_table_status', type_=Text, nullable=True)
-    creation_date_time = Column(name='creation_date_time', type_=TIMESTAMP, nullable=True)
-    replication_group = Column(name='replication_group', type_=JSON, nullable=True)
-    title = Column(name='title', type_=Text, primary_key=True, nullable=True)
-    akas = Column(name='akas', type_=JSON, nullable=True)
-    partition = Column(name='partition', type_=Text, nullable=True)
-    region = Column(name='region', type_=Text, nullable=True)
-    account_id = Column(name='account_id', type_=Text, nullable=True)
+    global_table_name = Column('global_table_name', Text, nullable=True)
+    global_table_arn = Column('global_table_arn', Text, nullable=True)
+    global_table_status = Column('global_table_status', Text, nullable=True)
+    creation_date_time = Column('creation_date_time', TIMESTAMP, nullable=True)
+    replication_group = Column('replication_group', JSON, nullable=True)
+    title = Column('title', Text, primary_key=True, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)

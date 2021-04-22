@@ -16,12 +16,14 @@ import sqlalchemy.future
 from sqlalchemy import MetaData
 from sqlalchemy.future import Engine, create_engine
 from sqlalchemy import orm
+from sqlalchemy.orm import sessionmaker
 
 metadata = MetaData()
 Base: 'DeclarativeMeta' = orm.declarative_base(metadata=metadata)
 
 DATABASE_CONNECTION_PATH: Optional[str] = None
 engine: Optional[Engine] = None
+db: Optional[sessionmaker] = None
 
 T = TypeVar('T')
 
@@ -151,6 +153,8 @@ class Query(Generic[T], orm.Query):
 
 def query(resource: T) -> Union[Iterable[T], Query[T]]:
     """Wrapper around Session.query that supports type annotations."""
+    if not db:
+        status()
     return db.query(resource)
 
 
@@ -181,11 +185,14 @@ class SteampipeStatus(Enum):
 def status() -> (SteampipeStatus, str):
     out = subprocess.check_output([bin_dir/'steampipe', 'service', 'status', '--install-dir', str(home_dir)])
     if b'NOT running' in out:
-        return SteampipeStatus.STOPPED, out
+        status = SteampipeStatus.STOPPED
     elif b'service is now running' in out:
-        return SteampipeStatus.RUNNING, out
+        status = SteampipeStatus.RUNNING
     else:
         raise UserWarning(f"Steampipe is in unknown state: {str(out)}")
+    if not set_db(out):
+        print("[WARN] Unable to setup db connection from steampipe status output", file=sys.stderr)
+    return status, out
 
 
 def restart():
@@ -193,9 +200,25 @@ def restart():
     start()
 
 
-def start(**kwargs):
+def set_db(status_out: bytes) -> bool:
     global engine, Session, db
 
+    DATABASE_CONNECTION_PATH = list(filter(lambda l: b'postgres://steampipe' in l, status_out.splitlines()))
+    try:
+        DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH[0].decode().strip()
+    except KeyError:
+        return False
+
+    # sqlalchemy expects postgresql:// rather then postgres://
+    DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH.replace('postgres', 'postgresql')
+
+    engine = create_engine(DATABASE_CONNECTION_PATH)
+    Session = sqlalchemy.orm.sessionmaker(engine, future=True)
+    db = Session()
+    return True
+
+
+def start(**kwargs):
     state, out = status()
     if state == SteampipeStatus.RUNNING:
         print("[WARN] Steampipe was running when we tried to start it. This is most likely a orphaned session. "
@@ -205,19 +228,8 @@ def start(**kwargs):
             [bin_dir/'steampipe', 'service', 'start', '--install-dir', str(home_dir), '--database-listen', 'local'],
             env={**os.environ, **kwargs},
         )
-
-
+        set_db(out)
     atexit.register(stop)
-
-    DATABASE_CONNECTION_PATH = list(filter(lambda l: b'postgres://steampipe' in l, out.splitlines()))
-    DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH[0].decode().strip()
-
-    # sqlalchemy expects postgresql:// rather then postgres://
-    DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH.replace('postgres', 'postgresql')
-
-    engine = create_engine(DATABASE_CONNECTION_PATH)
-    Session = sqlalchemy.orm.sessionmaker(engine, future=True)
-    db = Session()
 
 
 def stop():

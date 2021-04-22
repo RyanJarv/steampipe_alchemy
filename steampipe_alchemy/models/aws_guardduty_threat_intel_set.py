@@ -4,15 +4,16 @@ from sqlalchemy.dialects import postgresql as psql
 
 from steampipe_alchemy import Base
 
-class AwsLambdaAlias(Base):
-    __tablename__ = 'aws_lambda_alias'
+class AwsGuarddutyThreatIntelSet(Base):
+    __tablename__ = 'aws_guardduty_threat_intel_set'
     name = Column('name', Text, primary_key=True, nullable=True)
-    function_name = Column('function_name', Text, nullable=True)
-    alias_arn = Column('alias_arn', Text, nullable=True)
-    function_version = Column('function_version', Text, nullable=True)
-    revision_id = Column('revision_id', Text, nullable=True)
-    description = Column('description', Text, nullable=True)
+    threat_intel_set_id = Column('threat_intel_set_id', Text, nullable=True)
+    detector_id = Column('detector_id', Text, nullable=True)
+    format = Column('format', Text, nullable=True)
+    location = Column('location', Text, nullable=True)
+    status = Column('status', Text, nullable=True)
     title = Column('title', Text, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
     akas = Column('akas', JSON, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)

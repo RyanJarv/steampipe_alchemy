@@ -6,12 +6,12 @@ from steampipe_alchemy import Base
 
 class AwsSecurityhubHub(Base):
     __tablename__ = 'aws_securityhub_hub'
-    hub_arn = Column(name='hub_arn', type_=Text, nullable=True)
-    auto_enable_controls = Column(name='auto_enable_controls', type_=Boolean, nullable=True)
-    subscribed_at = Column(name='subscribed_at', type_=TIMESTAMP, nullable=True)
-    tags = Column(name='tags', type_=JSON, nullable=True)
-    title = Column(name='title', type_=Text, primary_key=True, nullable=True)
-    akas = Column(name='akas', type_=JSON, nullable=True)
-    partition = Column(name='partition', type_=Text, nullable=True)
-    region = Column(name='region', type_=Text, nullable=True)
-    account_id = Column(name='account_id', type_=Text, nullable=True)
+    hub_arn = Column('hub_arn', Text, nullable=True)
+    auto_enable_controls = Column('auto_enable_controls', Boolean, nullable=True)
+    subscribed_at = Column('subscribed_at', TIMESTAMP, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
+    title = Column('title', Text, primary_key=True, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)
