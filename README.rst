@@ -30,12 +30,15 @@ Features
 Install, setup, and start steampipe with the aws plugin.
 
 .. code-block:: python
-    
+
     # We're assuming the the AWS credentials are set in the environment here.
     from steampipe_alchemy as sa
 
     sa.install(['aws'])  # Downloads and installs steampipe with the aws plugin.
-    sa.update_config(['us-east-1', 'us-east-2', 'us-west-1']) #  Modifies ~/.local/share/steampipe_alchemy/config/aws.spc
+    sa.update_config(aws={ #  Modifies ~/.local/share/steampipe_alchemy/config/aws.spc
+        "plugin": "aws",
+        "regions": ['us-east-1', 'us-west-1', 'us-west-2']
+    })
     sa.start()  # Steampipe will be stopped when the script exits or when stop() is called.
 
 We can then use the SQLAlchemy models to query AWS.
@@ -44,7 +47,7 @@ We can then use the SQLAlchemy models to query AWS.
 
     from steampipe_alchemy import query
     from steampipe_alchemy.models import AwsS3Bucket
-    
+
     for b in query(AwsS3Bucket).limit(3):
         print(b.name)
         print("  Region: " + b.region)
@@ -59,10 +62,10 @@ Which will produce something like:
       Region: us-east-1
       Owner: example-prod-account
     example-bucket-2345
-      Region: us-east-2
+      Region: us-west-1
       Owner: example-prod-account
     example-bucket-3456
-      Region: us-west-1
+      Region: us-west-2
       Owner: example-prod-account
 
 
