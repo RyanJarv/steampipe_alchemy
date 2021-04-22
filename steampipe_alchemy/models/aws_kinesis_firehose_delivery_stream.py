@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_kinesis_firehose_delivery_stream import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql

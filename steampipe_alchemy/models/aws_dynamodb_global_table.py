@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_dynamodb_global_table import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql

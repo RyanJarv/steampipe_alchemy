@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_elastic_beanstalk_application import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql

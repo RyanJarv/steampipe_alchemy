@@ -1,11 +1,10 @@
-from typing import List
+from steampipe_alchemy.types.aws_iam_user import *
 
 from sqlalchemy import Column
-from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP
+from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
+from sqlalchemy.dialects import postgresql as psql
 
 from steampipe_alchemy import Base
-from steampipe_alchemy.types.policy import Policy
-
 
 class AwsIamUser(Base):
     __tablename__ = 'aws_iam_user'
@@ -18,15 +17,15 @@ class AwsIamUser(Base):
     permissions_boundary_arn = Column('permissions_boundary_arn', Text, nullable=True)
     permissions_boundary_type = Column('permissions_boundary_type', Text, nullable=True)
     mfa_enabled = Column('mfa_enabled', Boolean, nullable=True)
-    mfa_devices = Column('mfa_devices', JSON, nullable=True)
-    groups = Column('groups', JSON, nullable=True)
-    inline_policies = Column('inline_policies', JSON, nullable=True)
-    inline_policies_std: List[Policy] = Column('inline_policies_std', JSON, nullable=True)
-    attached_policy_arns = Column('attached_policy_arns', JSON, nullable=True)
-    tags_src = Column('tags_src', JSON, nullable=True)
-    tags = Column('tags', JSON, nullable=True)
+    mfa_devices: MfaDevices = Column('mfa_devices', JSON, nullable=True)
+    groups: Groups = Column('groups', JSON, nullable=True)
+    inline_policies: InlinePolicies = Column('inline_policies', JSON, nullable=True)
+    inline_policies_std: InlinePoliciesStd = Column('inline_policies_std', JSON, nullable=True)
+    attached_policy_arns: AttachedPolicyArns = Column('attached_policy_arns', JSON, nullable=True)
+    tags_src: TagsSrc = Column('tags_src', JSON, nullable=True)
+    tags: Tags = Column('tags', JSON, nullable=True)
     title = Column('title', Text, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
+    akas: Akas = Column('akas', JSON, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)

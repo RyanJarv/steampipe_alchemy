@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_vpc_security_group_rule import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql

@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_api_gatewayv2_domain_name import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql

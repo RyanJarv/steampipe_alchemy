@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_ec2_transit_gateway_route_table import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql

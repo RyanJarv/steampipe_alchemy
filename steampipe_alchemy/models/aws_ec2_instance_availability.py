@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_ec2_instance_availability import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
@@ -10,4 +12,4 @@ class AwsEc2InstanceAvailability(Base):
     location = Column('location', Text, nullable=True)
     location_type = Column('location_type', Text, nullable=True)
     title = Column('title', Text, primary_key=True, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
+    akas: Akas = Column('akas', JSON, nullable=True)

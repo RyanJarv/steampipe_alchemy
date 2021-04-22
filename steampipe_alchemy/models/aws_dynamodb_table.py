@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_dynamodb_table import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
@@ -19,16 +21,16 @@ class AwsDynamodbTable(Base):
     latest_stream_arn = Column('latest_stream_arn', Text, nullable=True)
     latest_stream_label = Column('latest_stream_label', Text, nullable=True)
     table_size_bytes = Column('table_size_bytes', BigInteger, nullable=True)
-    archival_summary = Column('archival_summary', JSON, nullable=True)
-    attribute_definitions = Column('attribute_definitions', JSON, nullable=True)
-    key_schema = Column('key_schema', JSON, nullable=True)
-    sse_description = Column('sse_description', JSON, nullable=True)
+    archival_summary: ArchivalSummary = Column('archival_summary', JSON, nullable=True)
+    attribute_definitions: AttributeDefinitions = Column('attribute_definitions', JSON, nullable=True)
+    key_schema: KeySchema = Column('key_schema', JSON, nullable=True)
+    sse_description: SseDescription = Column('sse_description', JSON, nullable=True)
     continuous_backups_status = Column('continuous_backups_status', Text, nullable=True)
-    point_in_time_recovery_description = Column('point_in_time_recovery_description', JSON, nullable=True)
-    tags_src = Column('tags_src', JSON, nullable=True)
-    tags = Column('tags', JSON, nullable=True)
+    point_in_time_recovery_description: PointInTimeRecoveryDescription = Column('point_in_time_recovery_description', JSON, nullable=True)
+    tags_src: TagsSrc = Column('tags_src', JSON, nullable=True)
+    tags: Tags = Column('tags', JSON, nullable=True)
     title = Column('title', Text, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
+    akas: Akas = Column('akas', JSON, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)

@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_iam_access_key import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
@@ -11,7 +13,7 @@ class AwsIamAccessKey(Base):
     status = Column('status', Text, nullable=True)
     create_date = Column('create_date', TIMESTAMP, nullable=True)
     title = Column('title', Text, primary_key=True, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
+    akas: Akas = Column('akas', JSON, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)

@@ -60,6 +60,8 @@ with engine.connect() as conn:
 
     for table in tables:
         template = f"""
+from steampipe_alchemy.types.{table} import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
@@ -128,4 +130,6 @@ class {snake_case(table)}(Base):
         f.write_text(template)
 
 
-subprocess.check_output(['git', 'apply', './patches/models.diff'])
+#subprocess.check_output(['git', 'apply', './patches/models.diff'])
+
+import generate_types

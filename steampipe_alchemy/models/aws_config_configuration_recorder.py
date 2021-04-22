@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_config_configuration_recorder import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
@@ -7,11 +9,11 @@ from steampipe_alchemy import Base
 class AwsConfigConfigurationRecorder(Base):
     __tablename__ = 'aws_config_configuration_recorder'
     name = Column('name', Text, primary_key=True, nullable=True)
-    recording_group = Column('recording_group', JSON, nullable=True)
+    recording_group: RecordingGroup = Column('recording_group', JSON, nullable=True)
     role_arn = Column('role_arn', Text, nullable=True)
     status_recording = Column('status_recording', Boolean, nullable=True)
-    status = Column('status', JSON, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
+    status: Status = Column('status', JSON, nullable=True)
+    akas: Akas = Column('akas', JSON, nullable=True)
     title = Column('title', Text, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)

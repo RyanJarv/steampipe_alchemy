@@ -1,3 +1,5 @@
+from steampipe_alchemy.types.aws_cloudwatch_log_stream import *
+
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
@@ -15,7 +17,7 @@ class AwsCloudwatchLogStream(Base):
     last_ingestion_time = Column('last_ingestion_time', TIMESTAMP, nullable=True)
     upload_sequence_token = Column('upload_sequence_token', Text, nullable=True)
     title = Column('title', Text, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
+    akas: Akas = Column('akas', JSON, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
