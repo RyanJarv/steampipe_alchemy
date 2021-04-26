@@ -264,7 +264,7 @@ def get_linux():
     with open(bin_dir / 'steampipe.tar.gz', 'wb') as f:
         f.write(resp.read())
 
-    with tarfile.TarFile(bin_dir / 'steampipe.tar.gz', 'r') as z:
+    with tarfile.open(bin_dir / 'steampipe.tar.gz', 'r') as z:
         z.extractall(bin_dir)
 
 
