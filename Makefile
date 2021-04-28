@@ -52,7 +52,8 @@ lint: ## check style with flake8
 
 # Run all tests, including those that require AWS credentials set in the environment
 test:
-	pytest tests
+	pytest tests/pr
+	pytest tests/main
 
 # Run tests that do not require AWS credentials
 pr-test: 
