@@ -6,8 +6,11 @@ steampipe-alchemy
 .. image:: https://img.shields.io/pypi/v/steampipe_alchemy.svg
         :target: https://pypi.python.org/pypi/steampipe_alchemy
 
-.. image:: https://img.shields.io/travis/RyanJarv/steampipe_alchemy.svg
-        :target: https://travis-ci.com/RyanJarv/steampipe_alchemy
+.. image:: https://github.com/RyanJarv/steampipe_alchemy/actions/workflows/tests.yml/badge.svg
+        :target: https://github.com/RyanJarv/steampipe_alchemy/actions/workflows/tests.yml
+
+.. image:: https://github.com/RyanJarv/steampipe_alchemy/actions/workflows/publish.yml/badge.svg
+        :target: https://github.com/RyanJarv/steampipe_alchemy/actions/workflows/publish.yml
 
 .. image:: https://readthedocs.org/projects/steampipe-alchemy/badge/?version=latest
         :target: https://steampipe-alchemy.readthedocs.io/en/latest/?version=latest

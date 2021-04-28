@@ -1,4 +1,5 @@
-from typing import TypedDict, List
+from typing import List
+from typing_extensions import TypedDict
 
 
 # {'Sid': 'VisualEditor0', 'Action': ['ec2:*'], 'Effect': 'Allow', 'Resource': ['*']}

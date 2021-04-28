@@ -14,16 +14,15 @@ from enum import Enum
 import sqlalchemy.orm
 import sqlalchemy.future
 from sqlalchemy import MetaData
-from sqlalchemy.future import Engine, create_engine
+from sqlalchemy.future import create_engine
 from sqlalchemy import orm
-from sqlalchemy.orm import sessionmaker
 
 metadata = MetaData()
-Base: 'DeclarativeMeta' = orm.declarative_base(metadata=metadata)
+Base: 'orm.DeclarativeMeta' = orm.declarative_base(metadata=metadata)
 
 DATABASE_CONNECTION_PATH: Optional[str] = None
-engine: Optional[Engine] = None
-db: Optional[sessionmaker] = None
+engine: Optional['orm.Engine'] = None
+db: Optional['orm.sessionmaker'] = None
 
 T = TypeVar('T')
 
