@@ -12,3 +12,7 @@ pytest-runner==5.1
 
 mypy==0.812
 mypy-extensions==0.4.3
+
+boto3~=1.17.59
+SQLAlchemy~=1.4.8
+setuptools~=56.0.0

@@ -50,11 +50,13 @@ clean-test: ## remove test and coverage artifacts
 lint: ## check style with flake8
 	flake8 steampipe_alchemy tests
 
-test: ## run tests quickly with the default Python
-	pytest
+# Run all tests, including those that require AWS credentials set in the environment
+test:
+	pytest tests
 
-test-all: ## run tests on every Python version with tox
-	tox
+# Run tests that do not require AWS credentials
+pr-test: 
+	pytest tests/pr
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source steampipe_alchemy -m pytest
