@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsLambdaVersion(Base):
+class AwsLambdaVersion(Base, FormatMixins):
     __tablename__ = 'aws_lambda_version'
     version = Column('version', Text, nullable=True)
     function_name = Column('function_name', Text, nullable=True)

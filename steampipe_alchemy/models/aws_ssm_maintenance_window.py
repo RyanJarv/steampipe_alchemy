@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSsmMaintenanceWindow(Base):
+class AwsSsmMaintenanceWindow(Base, FormatMixins):
     __tablename__ = 'aws_ssm_maintenance_window'
     name = Column('name', Text, primary_key=True, nullable=True)
     window_id = Column('window_id', Text, nullable=True)

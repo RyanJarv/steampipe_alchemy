@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsKinesisFirehoseDeliveryStream(Base):
+class AwsKinesisFirehoseDeliveryStream(Base, FormatMixins):
     __tablename__ = 'aws_kinesis_firehose_delivery_stream'
     delivery_stream_name = Column('delivery_stream_name', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)

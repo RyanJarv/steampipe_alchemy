@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcInternetGateway(Base):
+class AwsVpcInternetGateway(Base, FormatMixins):
     __tablename__ = 'aws_vpc_internet_gateway'
     internet_gateway_id = Column('internet_gateway_id', Text, nullable=True)
     owner_id = Column('owner_id', Text, nullable=True)

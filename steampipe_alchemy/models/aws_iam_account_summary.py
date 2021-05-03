@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamAccountSummary(Base):
+class AwsIamAccountSummary(Base, FormatMixins):
     __tablename__ = 'aws_iam_account_summary'
     access_keys_per_user_quota = Column('access_keys_per_user_quota', BigInteger, nullable=True)
     account_access_keys_present = Column('account_access_keys_present', BigInteger, nullable=True)

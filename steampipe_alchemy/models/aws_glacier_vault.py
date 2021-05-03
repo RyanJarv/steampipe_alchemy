@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsGlacierVault(Base):
+class AwsGlacierVault(Base, FormatMixins):
     __tablename__ = 'aws_glacier_vault'
     vault_name = Column('vault_name', Text, nullable=True)
     vault_arn = Column('vault_arn', Text, nullable=True)

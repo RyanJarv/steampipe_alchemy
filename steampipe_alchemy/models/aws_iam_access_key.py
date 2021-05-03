@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamAccessKey(Base):
+class AwsIamAccessKey(Base, FormatMixins):
     __tablename__ = 'aws_iam_access_key'
     access_key_id = Column('access_key_id', Text, nullable=True)
     user_name = Column('user_name', Text, nullable=True)

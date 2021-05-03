@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsElasticBeanstalkEnvironment(Base):
+class AwsElasticBeanstalkEnvironment(Base, FormatMixins):
     __tablename__ = 'aws_elastic_beanstalk_environment'
     environment_name = Column('environment_name', Text, nullable=True)
     environment_id = Column('environment_id', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRedshiftParameterGroup(Base):
+class AwsRedshiftParameterGroup(Base, FormatMixins):
     __tablename__ = 'aws_redshift_parameter_group'
     name = Column('name', Text, primary_key=True, nullable=True)
     description = Column('description', Text, nullable=True)

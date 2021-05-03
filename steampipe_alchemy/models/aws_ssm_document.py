@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSsmDocument(Base):
+class AwsSsmDocument(Base, FormatMixins):
     __tablename__ = 'aws_ssm_document'
     name = Column('name', Text, primary_key=True, nullable=True)
     account_ids = Column('account_ids', JSON, nullable=True)

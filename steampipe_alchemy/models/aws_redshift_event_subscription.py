@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRedshiftEventSubscription(Base):
+class AwsRedshiftEventSubscription(Base, FormatMixins):
     __tablename__ = 'aws_redshift_event_subscription'
     cust_subscription_id = Column('cust_subscription_id', Text, nullable=True)
     customer_aws_id = Column('customer_aws_id', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsGuarddutyThreatIntelSet(Base):
+class AwsGuarddutyThreatIntelSet(Base, FormatMixins):
     __tablename__ = 'aws_guardduty_threat_intel_set'
     name = Column('name', Text, primary_key=True, nullable=True)
     threat_intel_set_id = Column('threat_intel_set_id', Text, nullable=True)

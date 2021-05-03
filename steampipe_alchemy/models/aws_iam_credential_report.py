@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamCredentialReport(Base):
+class AwsIamCredentialReport(Base, FormatMixins):
     __tablename__ = 'aws_iam_credential_report'
     user_name = Column('user_name', Text, nullable=True)
     user_arn = Column('user_arn', Text, primary_key=True, nullable=True)

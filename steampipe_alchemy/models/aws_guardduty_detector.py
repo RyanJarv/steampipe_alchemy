@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsGuarddutyDetector(Base):
+class AwsGuarddutyDetector(Base, FormatMixins):
     __tablename__ = 'aws_guardduty_detector'
     detector_id = Column('detector_id', Text, nullable=True)
     status = Column('status', Text, nullable=True)

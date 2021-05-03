@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsCloudformationStack(Base):
+class AwsCloudformationStack(Base, FormatMixins):
     __tablename__ = 'aws_cloudformation_stack'
     id = Column('id', Text, primary_key=True, nullable=True)
     name = Column('name', Text, nullable=True)

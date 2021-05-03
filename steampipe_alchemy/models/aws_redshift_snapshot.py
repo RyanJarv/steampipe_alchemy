@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRedshiftSnapshot(Base):
+class AwsRedshiftSnapshot(Base, FormatMixins):
     __tablename__ = 'aws_redshift_snapshot'
     snapshot_identifier = Column('snapshot_identifier', Text, nullable=True)
     cluster_identifier = Column('cluster_identifier', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSsmParameter(Base):
+class AwsSsmParameter(Base, FormatMixins):
     __tablename__ = 'aws_ssm_parameter'
     name = Column('name', Text, nullable=True)
     type = Column('type', Text, nullable=True)

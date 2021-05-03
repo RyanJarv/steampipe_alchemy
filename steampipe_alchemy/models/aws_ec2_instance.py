@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEc2Instance(Base):
+class AwsEc2Instance(Base, FormatMixins):
     __tablename__ = 'aws_ec2_instance'
     instance_id = Column('instance_id', Text, nullable=True)
     instance_type = Column('instance_type', Text, nullable=True)

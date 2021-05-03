@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRoute53Zone(Base):
+class AwsRoute53Zone(Base, FormatMixins):
     __tablename__ = 'aws_route53_zone'
     name = Column('name', Text, nullable=True)
     id = Column('id', Text, primary_key=True, nullable=True)

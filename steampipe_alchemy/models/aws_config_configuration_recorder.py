@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsConfigConfigurationRecorder(Base):
+class AwsConfigConfigurationRecorder(Base, FormatMixins):
     __tablename__ = 'aws_config_configuration_recorder'
     name = Column('name', Text, primary_key=True, nullable=True)
     recording_group = Column('recording_group', JSON, nullable=True)

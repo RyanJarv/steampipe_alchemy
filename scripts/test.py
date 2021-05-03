@@ -8,5 +8,5 @@ update_config(aws={
 })
 start()
 
-for b in query(AwsVpc):
-    print(b.region)
+for b in query(AwsVpc).all():
+    print(b.to_dict())

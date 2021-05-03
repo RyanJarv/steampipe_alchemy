@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRdsDbInstance(Base):
+class AwsRdsDbInstance(Base, FormatMixins):
     __tablename__ = 'aws_rds_db_instance'
     db_instance_identifier = Column('db_instance_identifier', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)

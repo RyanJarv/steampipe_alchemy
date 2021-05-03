@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpc(Base):
+class AwsVpc(Base, FormatMixins):
     __tablename__ = 'aws_vpc'
     vpc_id = Column('vpc_id', Text, nullable=True)
     cidr_block = Column('cidr_block', psql.CIDR, nullable=True)

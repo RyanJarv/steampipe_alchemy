@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSsmPatchBaseline(Base):
+class AwsSsmPatchBaseline(Base, FormatMixins):
     __tablename__ = 'aws_ssm_patch_baseline'
     name = Column('name', Text, primary_key=True, nullable=True)
     baseline_id = Column('baseline_id', Text, nullable=True)

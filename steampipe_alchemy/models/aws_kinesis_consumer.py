@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsKinesisConsumer(Base):
+class AwsKinesisConsumer(Base, FormatMixins):
     __tablename__ = 'aws_kinesis_consumer'
     consumer_name = Column('consumer_name', Text, nullable=True)
     consumer_arn = Column('consumer_arn', Text, nullable=True)

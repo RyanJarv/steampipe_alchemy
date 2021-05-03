@@ -1,13 +1,14 @@
 from typing import List
 
 from sqlalchemy import Column
-from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP
-
-from steampipe_alchemy import Base
+from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
+from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 from steampipe_alchemy.types.policy import Policy
 
+from steampipe_alchemy import Base
 
-class AwsIamUser(Base):
+class AwsIamUser(Base, FormatMixins):
     __tablename__ = 'aws_iam_user'
     name = Column('name', Text, nullable=True)
     user_id = Column('user_id', Text, nullable=True)

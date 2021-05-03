@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSecurityhubHub(Base):
+class AwsSecurityhubHub(Base, FormatMixins):
     __tablename__ = 'aws_securityhub_hub'
     hub_arn = Column('hub_arn', Text, nullable=True)
     auto_enable_controls = Column('auto_enable_controls', Boolean, nullable=True)

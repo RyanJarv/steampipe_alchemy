@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSnsTopic(Base):
+class AwsSnsTopic(Base, FormatMixins):
     __tablename__ = 'aws_sns_topic'
     topic_arn = Column('topic_arn', Text, nullable=True)
     display_name = Column('display_name', Text, nullable=True)

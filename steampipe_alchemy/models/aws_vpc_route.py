@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcRoute(Base):
+class AwsVpcRoute(Base, FormatMixins):
     __tablename__ = 'aws_vpc_route'
     route_table_id = Column('route_table_id', Text, nullable=True)
     state = Column('state', Text, nullable=True)

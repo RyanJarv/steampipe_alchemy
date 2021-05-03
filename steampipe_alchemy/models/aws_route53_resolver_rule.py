@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRoute53ResolverRule(Base):
+class AwsRoute53ResolverRule(Base, FormatMixins):
     __tablename__ = 'aws_route53_resolver_rule'
     name = Column('name', Text, nullable=True)
     id = Column('id', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcVpnGateway(Base):
+class AwsVpcVpnGateway(Base, FormatMixins):
     __tablename__ = 'aws_vpc_vpn_gateway'
     vpn_gateway_id = Column('vpn_gateway_id', Text, nullable=True)
     state = Column('state', Text, nullable=True)

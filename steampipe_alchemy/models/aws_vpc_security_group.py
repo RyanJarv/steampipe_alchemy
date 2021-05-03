@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcSecurityGroup(Base):
+class AwsVpcSecurityGroup(Base, FormatMixins):
     __tablename__ = 'aws_vpc_security_group'
     group_name = Column('group_name', Text, nullable=True)
     group_id = Column('group_id', Text, nullable=True)

@@ -43,6 +43,9 @@ class Query(Generic[T], orm.Query):
     """
     ...
 
+    def all(self) -> Union[Iterable[T], 'Query']:
+        ...
+
     def _set_lazyload_from(self, state) -> Union[Iterable[T], 'Query']:
         ...
 

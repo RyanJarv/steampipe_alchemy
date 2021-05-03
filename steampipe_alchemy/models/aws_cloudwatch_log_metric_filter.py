@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsCloudwatchLogMetricFilter(Base):
+class AwsCloudwatchLogMetricFilter(Base, FormatMixins):
     __tablename__ = 'aws_cloudwatch_log_metric_filter'
     name = Column('name', Text, primary_key=True, nullable=True)
     log_group_name = Column('log_group_name', Text, nullable=True)

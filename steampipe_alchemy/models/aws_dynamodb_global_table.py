@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsDynamodbGlobalTable(Base):
+class AwsDynamodbGlobalTable(Base, FormatMixins):
     __tablename__ = 'aws_dynamodb_global_table'
     global_table_name = Column('global_table_name', Text, nullable=True)
     global_table_arn = Column('global_table_arn', Text, nullable=True)

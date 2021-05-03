@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsApiGatewayApiKey(Base):
+class AwsApiGatewayApiKey(Base, FormatMixins):
     __tablename__ = 'aws_api_gateway_api_key'
     name = Column('name', Text, nullable=True)
     id = Column('id', Text, primary_key=True, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEcsTaskDefinition(Base):
+class AwsEcsTaskDefinition(Base, FormatMixins):
     __tablename__ = 'aws_ecs_task_definition'
     task_definition_arn = Column('task_definition_arn', Text, nullable=True)
     cpu = Column('cpu', BigInteger, nullable=True)

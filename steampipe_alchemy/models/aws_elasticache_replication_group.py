@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsElasticacheReplicationGroup(Base):
+class AwsElasticacheReplicationGroup(Base, FormatMixins):
     __tablename__ = 'aws_elasticache_replication_group'
     replication_group_id = Column('replication_group_id', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)

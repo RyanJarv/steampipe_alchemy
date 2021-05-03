@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamGroup(Base):
+class AwsIamGroup(Base, FormatMixins):
     __tablename__ = 'aws_iam_group'
     name = Column('name', Text, nullable=True)
     group_id = Column('group_id', Text, nullable=True)

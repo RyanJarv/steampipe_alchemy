@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamPolicySimulator(Base):
+class AwsIamPolicySimulator(Base, FormatMixins):
     __tablename__ = 'aws_iam_policy_simulator'
     principal_arn = Column('principal_arn', Text, primary_key=True, nullable=True)
     action = Column('action', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcFlowLog(Base):
+class AwsVpcFlowLog(Base, FormatMixins):
     __tablename__ = 'aws_vpc_flow_log'
     flow_log_id = Column('flow_log_id', Text, nullable=True)
     creation_time = Column('creation_time', TIMESTAMP, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsCloudwatchLogStream(Base):
+class AwsCloudwatchLogStream(Base, FormatMixins):
     __tablename__ = 'aws_cloudwatch_log_stream'
     name = Column('name', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)

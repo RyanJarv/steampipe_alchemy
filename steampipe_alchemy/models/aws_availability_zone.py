@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsAvailabilityZone(Base):
+class AwsAvailabilityZone(Base, FormatMixins):
     __tablename__ = 'aws_availability_zone'
     name = Column('name', Text, primary_key=True, nullable=True)
     zone_id = Column('zone_id', Text, nullable=True)

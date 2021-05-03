@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsWellarchitectedWorkload(Base):
+class AwsWellarchitectedWorkload(Base, FormatMixins):
     __tablename__ = 'aws_wellarchitected_workload'
     workload_name = Column('workload_name', Text, nullable=True)
     workload_arn = Column('workload_arn', Text, nullable=True)

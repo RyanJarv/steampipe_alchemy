@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEfsAccessPoint(Base):
+class AwsEfsAccessPoint(Base, FormatMixins):
     __tablename__ = 'aws_efs_access_point'
     name = Column('name', Text, primary_key=True, nullable=True)
     access_point_id = Column('access_point_id', Text, nullable=True)

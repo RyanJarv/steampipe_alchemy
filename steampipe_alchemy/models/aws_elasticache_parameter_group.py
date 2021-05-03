@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsElasticacheParameterGroup(Base):
+class AwsElasticacheParameterGroup(Base, FormatMixins):
     __tablename__ = 'aws_elasticache_parameter_group'
     cache_parameter_group_name = Column('cache_parameter_group_name', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)

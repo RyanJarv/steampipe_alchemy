@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEc2TargetGroup(Base):
+class AwsEc2TargetGroup(Base, FormatMixins):
     __tablename__ = 'aws_ec2_target_group'
     target_group_name = Column('target_group_name', Text, nullable=True)
     target_group_arn = Column('target_group_arn', Text, nullable=True)

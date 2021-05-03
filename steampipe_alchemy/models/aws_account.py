@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsAccount(Base):
+class AwsAccount(Base, FormatMixins):
     __tablename__ = 'aws_account'
     account_aliases = Column('account_aliases', JSON, nullable=True)
     organization_id = Column('organization_id', Text, nullable=True)

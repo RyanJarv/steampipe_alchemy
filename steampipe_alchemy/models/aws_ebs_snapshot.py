@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEbsSnapshot(Base):
+class AwsEbsSnapshot(Base, FormatMixins):
     __tablename__ = 'aws_ebs_snapshot'
     snapshot_id = Column('snapshot_id', Text, nullable=True)
     state = Column('state', Text, nullable=True)

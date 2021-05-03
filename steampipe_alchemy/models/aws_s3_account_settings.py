@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsS3AccountSettings(Base):
+class AwsS3AccountSettings(Base, FormatMixins):
     __tablename__ = 'aws_s3_account_settings'
     block_public_acls = Column('block_public_acls', Boolean, nullable=True)
     block_public_policy = Column('block_public_policy', Boolean, nullable=True)

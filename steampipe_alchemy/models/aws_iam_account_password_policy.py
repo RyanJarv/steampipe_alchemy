@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamAccountPasswordPolicy(Base):
+class AwsIamAccountPasswordPolicy(Base, FormatMixins):
     __tablename__ = 'aws_iam_account_password_policy'
     allow_users_to_change_password = Column('allow_users_to_change_password', Boolean, nullable=True)
     expire_passwords = Column('expire_passwords', Boolean, nullable=True)

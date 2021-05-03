@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsLambdaFunction(Base):
+class AwsLambdaFunction(Base, FormatMixins):
     __tablename__ = 'aws_lambda_function'
     name = Column('name', Text, nullable=True)
     code_sha_256 = Column('code_sha_256', Text, nullable=True)

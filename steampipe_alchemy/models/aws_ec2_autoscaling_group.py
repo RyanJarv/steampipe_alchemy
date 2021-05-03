@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEc2AutoscalingGroup(Base):
+class AwsEc2AutoscalingGroup(Base, FormatMixins):
     __tablename__ = 'aws_ec2_autoscaling_group'
     name = Column('name', Text, primary_key=True, nullable=True)
     autoscaling_group_arn = Column('autoscaling_group_arn', Text, nullable=True)

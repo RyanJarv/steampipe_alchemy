@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEcrRepository(Base):
+class AwsEcrRepository(Base, FormatMixins):
     __tablename__ = 'aws_ecr_repository'
     repository_name = Column('repository_name', Text, nullable=True)
     registry_id = Column('registry_id', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsKinesisVideoStream(Base):
+class AwsKinesisVideoStream(Base, FormatMixins):
     __tablename__ = 'aws_kinesis_video_stream'
     stream_name = Column('stream_name', Text, nullable=True)
     stream_arn = Column('stream_arn', Text, nullable=True)

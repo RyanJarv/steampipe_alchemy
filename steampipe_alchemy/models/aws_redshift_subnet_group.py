@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRedshiftSubnetGroup(Base):
+class AwsRedshiftSubnetGroup(Base, FormatMixins):
     __tablename__ = 'aws_redshift_subnet_group'
     cluster_subnet_group_name = Column('cluster_subnet_group_name', Text, nullable=True)
     subnet_group_status = Column('subnet_group_status', Text, nullable=True)

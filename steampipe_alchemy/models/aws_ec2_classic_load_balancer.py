@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEc2ClassicLoadBalancer(Base):
+class AwsEc2ClassicLoadBalancer(Base, FormatMixins):
     __tablename__ = 'aws_ec2_classic_load_balancer'
     name = Column('name', Text, primary_key=True, nullable=True)
     scheme = Column('scheme', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsDynamodbTable(Base):
+class AwsDynamodbTable(Base, FormatMixins):
     __tablename__ = 'aws_dynamodb_table'
     name = Column('name', Text, primary_key=True, nullable=True)
     table_arn = Column('table_arn', Text, nullable=True)

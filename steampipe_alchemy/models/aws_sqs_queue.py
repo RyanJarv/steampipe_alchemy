@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSqsQueue(Base):
+class AwsSqsQueue(Base, FormatMixins):
     __tablename__ = 'aws_sqs_queue'
     queue_url = Column('queue_url', Text, nullable=True)
     queue_arn = Column('queue_arn', Text, nullable=True)

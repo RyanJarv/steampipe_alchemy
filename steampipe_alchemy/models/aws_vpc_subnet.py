@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcSubnet(Base):
+class AwsVpcSubnet(Base, FormatMixins):
     __tablename__ = 'aws_vpc_subnet'
     subnet_id = Column('subnet_id', Text, nullable=True)
     subnet_arn = Column('subnet_arn', Text, nullable=True)

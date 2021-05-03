@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamServerCertificate(Base):
+class AwsIamServerCertificate(Base, FormatMixins):
     __tablename__ = 'aws_iam_server_certificate'
     name = Column('name', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)

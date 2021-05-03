@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcCustomerGateway(Base):
+class AwsVpcCustomerGateway(Base, FormatMixins):
     __tablename__ = 'aws_vpc_customer_gateway'
     customer_gateway_id = Column('customer_gateway_id', Text, nullable=True)
     type = Column('type', Text, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcEip(Base):
+class AwsVpcEip(Base, FormatMixins):
     __tablename__ = 'aws_vpc_eip'
     allocation_id = Column('allocation_id', Text, nullable=True)
     public_ip = Column('public_ip', psql.INET, nullable=True)

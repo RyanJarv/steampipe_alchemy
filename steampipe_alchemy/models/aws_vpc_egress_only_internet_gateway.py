@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcEgressOnlyInternetGateway(Base):
+class AwsVpcEgressOnlyInternetGateway(Base, FormatMixins):
     __tablename__ = 'aws_vpc_egress_only_internet_gateway'
     id = Column('id', Text, primary_key=True, nullable=True)
     attachments = Column('attachments', JSON, nullable=True)

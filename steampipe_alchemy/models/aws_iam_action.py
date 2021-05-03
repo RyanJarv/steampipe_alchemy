@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamAction(Base):
+class AwsIamAction(Base, FormatMixins):
     __tablename__ = 'aws_iam_action'
     action = Column('action', Text, primary_key=True, nullable=True)
     prefix = Column('prefix', Text, nullable=True)

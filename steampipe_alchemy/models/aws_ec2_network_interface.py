@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEc2NetworkInterface(Base):
+class AwsEc2NetworkInterface(Base, FormatMixins):
     __tablename__ = 'aws_ec2_network_interface'
     network_interface_id = Column('network_interface_id', Text, nullable=True)
     status = Column('status', Text, nullable=True)

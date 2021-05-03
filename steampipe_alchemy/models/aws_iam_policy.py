@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamPolicy(Base):
+class AwsIamPolicy(Base, FormatMixins):
     __tablename__ = 'aws_iam_policy'
     name = Column('name', Text, nullable=True)
     policy_id = Column('policy_id', Text, nullable=True)

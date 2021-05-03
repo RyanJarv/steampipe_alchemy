@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsRegion(Base):
+class AwsRegion(Base, FormatMixins):
     __tablename__ = 'aws_region'
     name = Column('name', Text, primary_key=True, nullable=True)
     opt_in_status = Column('opt_in_status', Text, nullable=True)

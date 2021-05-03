@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcNatGateway(Base):
+class AwsVpcNatGateway(Base, FormatMixins):
     __tablename__ = 'aws_vpc_nat_gateway'
     nat_gateway_id = Column('nat_gateway_id', Text, nullable=True)
     nat_gateway_addresses = Column('nat_gateway_addresses', JSON, nullable=True)

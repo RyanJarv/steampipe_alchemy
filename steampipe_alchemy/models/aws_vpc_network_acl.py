@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsVpcNetworkAcl(Base):
+class AwsVpcNetworkAcl(Base, FormatMixins):
     __tablename__ = 'aws_vpc_network_acl'
     network_acl_id = Column('network_acl_id', Text, nullable=True)
     is_default = Column('is_default', Boolean, nullable=True)

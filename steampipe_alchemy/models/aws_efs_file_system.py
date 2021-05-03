@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEfsFileSystem(Base):
+class AwsEfsFileSystem(Base, FormatMixins):
     __tablename__ = 'aws_efs_file_system'
     name = Column('name', Text, primary_key=True, nullable=True)
     file_system_id = Column('file_system_id', Text, nullable=True)

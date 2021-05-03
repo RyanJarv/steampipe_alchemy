@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsIamVirtualMfaDevice(Base):
+class AwsIamVirtualMfaDevice(Base, FormatMixins):
     __tablename__ = 'aws_iam_virtual_mfa_device'
     serial_number = Column('serial_number', Text, nullable=True)
     enable_date = Column('enable_date', TIMESTAMP, nullable=True)

@@ -63,10 +63,11 @@ with engine.connect() as conn:
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class {snake_case(table)}(Base):
+class {snake_case(table)}(Base, FormatMixins):
     __tablename__ = '{table}'
         """.rstrip('\n\t ').lstrip('\n\t ')
 

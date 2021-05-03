@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEcsCluster(Base):
+class AwsEcsCluster(Base, FormatMixins):
     __tablename__ = 'aws_ecs_cluster'
     cluster_arn = Column('cluster_arn', Text, nullable=True)
     cluster_name = Column('cluster_name', Text, nullable=True)

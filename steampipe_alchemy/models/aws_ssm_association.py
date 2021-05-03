@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSsmAssociation(Base):
+class AwsSsmAssociation(Base, FormatMixins):
     __tablename__ = 'aws_ssm_association'
     association_id = Column('association_id', Text, nullable=True)
     association_name = Column('association_name', Text, nullable=True)

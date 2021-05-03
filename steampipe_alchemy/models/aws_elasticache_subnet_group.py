@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsElasticacheSubnetGroup(Base):
+class AwsElasticacheSubnetGroup(Base, FormatMixins):
     __tablename__ = 'aws_elasticache_subnet_group'
     cache_subnet_group_name = Column('cache_subnet_group_name', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)

@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEc2LaunchConfiguration(Base):
+class AwsEc2LaunchConfiguration(Base, FormatMixins):
     __tablename__ = 'aws_ec2_launch_configuration'
     name = Column('name', Text, primary_key=True, nullable=True)
     launch_configuration_arn = Column('launch_configuration_arn', Text, nullable=True)

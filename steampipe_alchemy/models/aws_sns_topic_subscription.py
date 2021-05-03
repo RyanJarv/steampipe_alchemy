@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsSnsTopicSubscription(Base):
+class AwsSnsTopicSubscription(Base, FormatMixins):
     __tablename__ = 'aws_sns_topic_subscription'
     subscription_arn = Column('subscription_arn', Text, nullable=True)
     topic_arn = Column('topic_arn', Text, nullable=True)

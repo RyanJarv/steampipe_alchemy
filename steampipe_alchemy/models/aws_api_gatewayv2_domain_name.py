@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsApiGatewayv2DomainName(Base):
+class AwsApiGatewayv2DomainName(Base, FormatMixins):
     __tablename__ = 'aws_api_gatewayv2_domain_name'
     domain_name = Column('domain_name', Text, nullable=True)
     domain_name_configurations = Column('domain_name_configurations', JSON, nullable=True)

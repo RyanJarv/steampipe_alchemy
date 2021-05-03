@@ -1,10 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
 
 from steampipe_alchemy import Base
 
-class AwsEc2TransitGatewayVpcAttachment(Base):
+class AwsEc2TransitGatewayVpcAttachment(Base, FormatMixins):
     __tablename__ = 'aws_ec2_transit_gateway_vpc_attachment'
     transit_gateway_attachment_id = Column('transit_gateway_attachment_id', Text, nullable=True)
     transit_gateway_id = Column('transit_gateway_id', Text, nullable=True)
