@@ -57,9 +57,6 @@ We can then use the SQLAlchemy models to query AWS.
         print('  CIDR: ' + i.cidr_block)
         print('  Region: ' + i.region)
 
-    first_vpc = query(AwsVpc).first().to_dict()
-    print('CIDR (first vpc): ' + first_vpc['cidr_block'])
-
 Which will produce something like:
 
 .. code-block:: python
@@ -70,6 +67,18 @@ Which will produce something like:
     vpc-0a2a5413bab086b36
       CIDR: 172.31.0.0/16
       Region: us-east-2
+
+The models also have to_json and to_dict mixins:
+
+.. code-block:: python
+
+    first_vpc = query(AwsVpc).first().to_dict()
+    print('CIDR (first vpc): ' + first_vpc['cidr_block'])
+
+Which will output something like:
+
+.. code-block:: python
+
     CIDR (first vpc): 172.31.0.0/16
 
 
