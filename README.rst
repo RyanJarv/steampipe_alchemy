@@ -73,13 +73,7 @@ The models also have to_json and to_dict mixins:
 .. code-block:: python
 
     first_vpc = query(AwsVpc).first().to_dict()
-    print('CIDR (first vpc): ' + first_vpc['cidr_block'])
-
-Which will output something like:
-
-.. code-block:: python
-
-    CIDR (first vpc): 172.31.0.0/16
+    print(first_vpc['cidr_block'])
 
 
 The function steampipe_alchemy.query is a small wrapper around sqlalchemy.orm.Query. It is setup to use the steampipe sqlalchemy session and has type annotations which enable IDE completion on both the Model results and the Query class.
