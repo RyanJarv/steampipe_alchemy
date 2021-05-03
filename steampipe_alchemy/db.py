@@ -11,14 +11,11 @@ from pathlib import Path
 from typing import TypeVar, Iterable, Union, Generic, List, Optional
 from enum import Enum
 
-import sqlalchemy.orm
-import sqlalchemy.future
-from sqlalchemy import MetaData
-from sqlalchemy.future import create_engine
-from sqlalchemy import orm
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
+from sqlalchemy import MetaData, create_engine, orm
 
 metadata = MetaData()
-Base: 'orm.DeclarativeMeta' = orm.declarative_base(metadata=metadata)
+Base: 'DeclarativeMeta' = declarative_base(metadata=metadata)
 
 DATABASE_CONNECTION_PATH: Optional[str] = None
 engine: Optional['orm.Engine'] = None
@@ -210,7 +207,7 @@ def set_db(status_out: bytes) -> bool:
     DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH.replace('postgres', 'postgresql')
 
     engine = create_engine(DATABASE_CONNECTION_PATH)
-    Session = sqlalchemy.orm.sessionmaker(engine, future=True)
+    Session = orm.sessionmaker(engine)
     db = Session()
     return True
 
