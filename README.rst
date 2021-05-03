@@ -49,27 +49,28 @@ We can then use the SQLAlchemy models to query AWS.
 .. code-block:: python
 
     from steampipe_alchemy import query
-    from steampipe_alchemy.models import AwsS3Bucket
+    from steampipe_alchemy.models import AwsVpc
 
-    for b in query(AwsS3Bucket).limit(3):
-        print(b.name)
-        print("  Region: " + b.region)
-        print("  Owner: " + str(b.acl['Owner']['DisplayName']))
 
+    for i in query(AwsVpc).limit(2):
+        print(i.vpc_id + ':')
+        print('  CIDR: ' + i.cidr_block)
+        print('  Region: ' + i.region)
+
+    first_vpc = query(AwsVpc).first().to_dict()
+    print('CIDR (first vpc): ' + first_vpc['cidr_block'])
 
 Which will produce something like:
 
 .. code-block:: python
 
-    example-bucket-1234
-      Region: us-east-1
-      Owner: example-prod-account
-    example-bucket-2345
+    vpc-c65487a0
+      CIDR: 172.31.0.0/16
       Region: us-west-1
-      Owner: example-prod-account
-    example-bucket-3456
-      Region: us-west-2
-      Owner: example-prod-account
+    vpc-0a2a5413bab086b36
+      CIDR: 172.31.0.0/16
+      Region: us-east-2
+    CIDR (first vpc): 172.31.0.0/16
 
 
 The function steampipe_alchemy.query is a small wrapper around sqlalchemy.orm.Query. It is setup to use the steampipe sqlalchemy session and has type annotations which enable IDE completion on both the Model results and the Query class.
