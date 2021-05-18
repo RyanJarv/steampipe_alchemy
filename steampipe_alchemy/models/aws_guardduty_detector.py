@@ -1,9 +1,11 @@
-from sqlalchemy import Column
+from sqlalchemy import Column, select
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
-from steampipe_alchemy.mixins import FormatMixins
 
-from steampipe_alchemy import Base
+from sqlalchemy_utils import create_materialized_view
+
+from steampipe_alchemy.mixins import FormatMixins
+from steampipe_alchemy import Base, db
 
 class AwsGuarddutyDetector(Base, FormatMixins):
     __tablename__ = 'aws_guardduty_detector'
@@ -20,3 +22,25 @@ class AwsGuarddutyDetector(Base, FormatMixins):
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
+
+
+# Local materialized view table
+class AwsGuarddutyDetectorLocal(db.BaseEphemeralModels, FormatMixins):
+    __tablename__ = 'aws_guardduty_detector_local'
+    detector_id = Column('detector_id', Text, nullable=True)
+    status = Column('status', Text, nullable=True)
+    created_at = Column('created_at', TIMESTAMP, nullable=True)
+    finding_publishing_frequency = Column('finding_publishing_frequency', Text, nullable=True)
+    service_role = Column('service_role', Text, nullable=True)
+    updated_at = Column('updated_at', TIMESTAMP, nullable=True)
+    data_sources = Column('data_sources', JSON, nullable=True)
+    title = Column('title', Text, primary_key=True, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)
+
+
+cache = select(AwsGuarddutyDetector).select_from(AwsGuarddutyDetector)
+create_materialized_view('aws_guardduty_detector_local', cache, db.metadata_materialized)

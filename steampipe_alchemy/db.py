@@ -12,13 +12,18 @@ from typing import TypeVar, Iterable, Union, Generic, List, Optional
 from enum import Enum
 
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
-from sqlalchemy import MetaData, create_engine, orm
+from sqlalchemy import MetaData, create_engine, engine, orm
 
 metadata = MetaData()
+metadata_ephemeral_models = MetaData()
+metadata_materialized = MetaData()
+
 Base: 'DeclarativeMeta' = declarative_base(metadata=metadata)
+BaseEphemeralModels: 'DeclarativeMeta' = declarative_base(metadata=metadata_ephemeral_models)
+BaseMaterialized: 'DeclarativeMeta' = declarative_base(metadata=metadata_materialized)
 
 DATABASE_CONNECTION_PATH: Optional[str] = None
-engine: Optional['orm.Engine'] = None
+engine: Optional['engine.Engine'] = None
 db: Optional['orm.sessionmaker'] = None
 
 T = TypeVar('T')
@@ -182,14 +187,16 @@ class SteampipeStatus(Enum):
 
 
 def status() -> (SteampipeStatus, str):
+    engine = None
     out = subprocess.check_output([bin_dir/'steampipe', 'service', 'status', '--install-dir', str(home_dir)])
     if b'NOT running' in out:
         status = SteampipeStatus.STOPPED
     elif b'service is now running' in out:
         status = SteampipeStatus.RUNNING
+        engine = set_db(out)
     else:
         raise UserWarning(f"Steampipe is in unknown state: {str(out)}")
-    return status, out
+    return status, out, engine
 
 
 def restart():
@@ -197,25 +204,22 @@ def restart():
     start()
 
 
-def set_db(status_out: bytes) -> bool:
+def set_db(status_out: bytes) -> 'engine.Engine':
     global engine, Session, db
 
     DATABASE_CONNECTION_PATH = list(filter(lambda l: b'postgres://steampipe' in l, status_out.splitlines()))
-    try:
-        DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH[0].decode().strip()
-    except IndexError:
-        return False
+    DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH[0].decode().strip()
 
     # sqlalchemy expects postgresql:// rather then postgres://
     DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH.replace('postgres', 'postgresql')
 
     engine = create_engine(DATABASE_CONNECTION_PATH)
-    Session = orm.sessionmaker(engine)
+    Session = orm.sessionmaker(bind=engine)
     db = Session()
-    return True
+    return engine
 
 
-def start(**kwargs):
+def start(**kwargs) -> 'engine.Engine':
     state, out = status()
     if state == SteampipeStatus.RUNNING:
         print("[WARN] Steampipe was running when we tried to start it. This is most likely a orphaned session. "
@@ -225,8 +229,13 @@ def start(**kwargs):
             [bin_dir/'steampipe', 'service', 'start', '--install-dir', str(home_dir), '--database-listen', 'local'],
             env={**os.environ, **kwargs},
         )
-        set_db(out)
-    atexit.register(stop)
+    # atexit.register(stop)
+
+    return set_db(out)
+
+
+def create_all():
+    metadata.create_all(engine)
 
 
 def stop():

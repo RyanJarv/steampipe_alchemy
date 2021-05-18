@@ -1,9 +1,11 @@
-from sqlalchemy import Column
+from sqlalchemy import Column, select
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
-from steampipe_alchemy.mixins import FormatMixins
 
-from steampipe_alchemy import Base
+from sqlalchemy_utils import create_materialized_view
+
+from steampipe_alchemy.mixins import FormatMixins
+from steampipe_alchemy import Base, db
 
 class AwsInspectorAssessmentTarget(Base, FormatMixins):
     __tablename__ = 'aws_inspector_assessment_target'
@@ -17,3 +19,22 @@ class AwsInspectorAssessmentTarget(Base, FormatMixins):
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
+
+
+# Local materialized view table
+class AwsInspectorAssessmentTargetLocal(db.BaseEphemeralModels, FormatMixins):
+    __tablename__ = 'aws_inspector_assessment_target_local'
+    name = Column('name', Text, nullable=True)
+    arn = Column('arn', Text, primary_key=True, nullable=True)
+    resource_group_arn = Column('resource_group_arn', Text, nullable=True)
+    created_at = Column('created_at', TIMESTAMP, nullable=True)
+    updated_at = Column('updated_at', TIMESTAMP, nullable=True)
+    title = Column('title', Text, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)
+
+
+cache = select(AwsInspectorAssessmentTarget).select_from(AwsInspectorAssessmentTarget)
+create_materialized_view('aws_inspector_assessment_target_local', cache, db.metadata_materialized)
