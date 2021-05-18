@@ -1,9 +1,11 @@
-from sqlalchemy import Column
+from sqlalchemy import Column, select
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
-from steampipe_alchemy.mixins import FormatMixins
 
-from steampipe_alchemy import Base
+from sqlalchemy_utils import create_materialized_view
+
+from steampipe_alchemy.mixins import FormatMixins
+from steampipe_alchemy import Base, db
 
 class AwsRdsDbCluster(Base, FormatMixins):
     __tablename__ = 'aws_rds_db_cluster'
@@ -66,3 +68,71 @@ class AwsRdsDbCluster(Base, FormatMixins):
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
+
+
+# Local materialized view table
+class AwsRdsDbClusterLocal(db.BaseEphemeralModels, FormatMixins):
+    __tablename__ = 'aws_rds_db_cluster_local'
+    db_cluster_identifier = Column('db_cluster_identifier', Text, nullable=True)
+    arn = Column('arn', Text, primary_key=True, nullable=True)
+    status = Column('status', Text, nullable=True)
+    resource_id = Column('resource_id', Text, nullable=True)
+    create_time = Column('create_time', TIMESTAMP, nullable=True)
+    activity_stream_kinesis_stream_name = Column('activity_stream_kinesis_stream_name', Text, nullable=True)
+    activity_stream_kms_key_id = Column('activity_stream_kms_key_id', Text, nullable=True)
+    activity_stream_mode = Column('activity_stream_mode', Text, nullable=True)
+    activity_stream_status = Column('activity_stream_status', Text, nullable=True)
+    allocated_storage = Column('allocated_storage', BigInteger, nullable=True)
+    backtrack_consumed_change_records = Column('backtrack_consumed_change_records', BigInteger, nullable=True)
+    backtrack_window = Column('backtrack_window', BigInteger, nullable=True)
+    backup_retention_period = Column('backup_retention_period', BigInteger, nullable=True)
+    capacity = Column('capacity', BigInteger, nullable=True)
+    character_set_name = Column('character_set_name', Text, nullable=True)
+    clone_group_id = Column('clone_group_id', Text, nullable=True)
+    copy_tags_to_snapshot = Column('copy_tags_to_snapshot', Boolean, nullable=True)
+    cross_account_clone = Column('cross_account_clone', Boolean, nullable=True)
+    database_name = Column('database_name', Text, nullable=True)
+    db_cluster_parameter_group = Column('db_cluster_parameter_group', Text, nullable=True)
+    db_subnet_group = Column('db_subnet_group', Text, nullable=True)
+    deletion_protection = Column('deletion_protection', Boolean, nullable=True)
+    earliest_backtrack_time = Column('earliest_backtrack_time', TIMESTAMP, nullable=True)
+    earliest_restorable_time = Column('earliest_restorable_time', TIMESTAMP, nullable=True)
+    endpoint = Column('endpoint', Text, nullable=True)
+    engine = Column('engine', Text, nullable=True)
+    engine_mode = Column('engine_mode', Text, nullable=True)
+    engine_version = Column('engine_version', Text, nullable=True)
+    global_write_forwarding_requested = Column('global_write_forwarding_requested', Boolean, nullable=True)
+    global_write_forwarding_status = Column('global_write_forwarding_status', Text, nullable=True)
+    hosted_zone_id = Column('hosted_zone_id', Text, nullable=True)
+    http_endpoint_enabled = Column('http_endpoint_enabled', Boolean, nullable=True)
+    iam_database_authentication_enabled = Column('iam_database_authentication_enabled', Boolean, nullable=True)
+    kms_key_id = Column('kms_key_id', Text, nullable=True)
+    latest_restorable_time = Column('latest_restorable_time', TIMESTAMP, nullable=True)
+    master_user_name = Column('master_user_name', Text, nullable=True)
+    multi_az = Column('multi_az', Boolean, nullable=True)
+    percent_progress = Column('percent_progress', Text, nullable=True)
+    port = Column('port', BigInteger, nullable=True)
+    preferred_backup_window = Column('preferred_backup_window', Text, nullable=True)
+    preferred_maintenance_window = Column('preferred_maintenance_window', Text, nullable=True)
+    reader_endpoint = Column('reader_endpoint', Text, nullable=True)
+    storage_encrypted = Column('storage_encrypted', Boolean, nullable=True)
+    associated_roles = Column('associated_roles', JSON, nullable=True)
+    availability_zones = Column('availability_zones', JSON, nullable=True)
+    custom_endpoints = Column('custom_endpoints', JSON, nullable=True)
+    members = Column('members', JSON, nullable=True)
+    option_group_memberships = Column('option_group_memberships', JSON, nullable=True)
+    domain_memberships = Column('domain_memberships', JSON, nullable=True)
+    enabled_cloudwatch_logs_exports = Column('enabled_cloudwatch_logs_exports', JSON, nullable=True)
+    read_replica_identifiers = Column('read_replica_identifiers', JSON, nullable=True)
+    vpc_security_groups = Column('vpc_security_groups', JSON, nullable=True)
+    tags_src = Column('tags_src', JSON, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
+    title = Column('title', Text, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)
+
+
+cache = select(AwsRdsDbCluster).select_from(AwsRdsDbCluster)
+create_materialized_view('aws_rds_db_cluster_local', cache, db.metadata_materialized)

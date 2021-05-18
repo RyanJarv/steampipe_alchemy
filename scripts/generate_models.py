@@ -6,7 +6,7 @@ from pathlib import Path
 from sqlalchemy import MetaData, text, create_engine
 
 metadata = MetaData()
-engine = create_engine("postgresql://steampipe:a4eb-4e8b-b0f8@localhost:9193/steampipe?sslmode=disable", echo=True, future=True)
+_engine = create_engine("postgresql://steampipe:a4eb-4e8b-b0f8@localhost:9193/steampipe?sslmode=disable", echo=True, future=True)
 
 type_mapping = {
     'jsonb': 'JSON',
@@ -44,7 +44,7 @@ def snake_case(s: str) -> str:
     return ''.join(map(lambda p: p.capitalize(), s.split('_')))
 
 
-with engine.connect() as conn:
+with _engine.connect() as conn:
     result = conn.execute(text("""
         select table_name
             from information_schema.tables
@@ -60,12 +60,14 @@ with engine.connect() as conn:
 
     for table in tables:
         template = f"""
-from sqlalchemy import Column
+from sqlalchemy import Column, select
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
-from steampipe_alchemy.mixins import FormatMixins
 
-from steampipe_alchemy import Base
+from sqlalchemy_utils import create_materialized_view
+
+from steampipe_alchemy.mixins import FormatMixins
+from steampipe_alchemy import Base, db
 
 class {snake_case(table)}(Base, FormatMixins):
     __tablename__ = '{table}'
@@ -125,8 +127,36 @@ class {snake_case(table)}(Base, FormatMixins):
                 """
 
             template += row.lstrip('\t ').rstrip('\n\t ')
+
+        template += f"""
+
+
+# Local materialized view table
+class {snake_case(table)}Local(db.BaseEphemeralModels, FormatMixins):
+    __tablename__ = '{table}_local'
+        """.rstrip('\n\t ')
+
+
+        for name, type, _ in columns:
+            if name == primary_key or ((primary_key is list) and primary_key in list):
+                row = f"""
+    {normalize_attr(name)} = Column('{name}', {type_mapping[type]}, primary_key=True, nullable=True)
+                    """
+            else:
+                row = f"""
+    {normalize_attr(name)} = Column('{name}', {type_mapping[type]}, nullable=True)
+                    """
+
+            template += row.lstrip('\t ').rstrip('\n\t ')
+
+        template += f'''
+
+
+cache = select({snake_case(table)}).select_from({snake_case(table)})
+create_materialized_view('{table}_local', cache, db.metadata_materialized)
+'''
         f = (ModelsDir/Path(f'{table}.py'))
         f.write_text(template)
 
 
-subprocess.check_output(['git', 'apply', './patches/models.diff'])
+# subprocess.check_output(['git', 'apply', './patches/models.diff'])

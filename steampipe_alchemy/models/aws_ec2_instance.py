@@ -1,13 +1,16 @@
-from sqlalchemy import Column
+from sqlalchemy import Column, select
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
 from sqlalchemy.dialects import postgresql as psql
-from steampipe_alchemy.mixins import FormatMixins
 
-from steampipe_alchemy import Base
+from sqlalchemy_utils import create_materialized_view
+
+from steampipe_alchemy.mixins import FormatMixins
+from steampipe_alchemy import Base, db
 
 class AwsEc2Instance(Base, FormatMixins):
     __tablename__ = 'aws_ec2_instance'
     instance_id = Column('instance_id', Text, nullable=True)
+    arn = Column('arn', Text, primary_key=True, nullable=True)
     instance_type = Column('instance_type', Text, nullable=True)
     instance_state = Column('instance_state', Text, nullable=True)
     monitoring_state = Column('monitoring_state', Text, nullable=True)
@@ -51,8 +54,67 @@ class AwsEc2Instance(Base, FormatMixins):
     instance_status = Column('instance_status', JSON, nullable=True)
     tags_src = Column('tags_src', JSON, nullable=True)
     tags = Column('tags', JSON, nullable=True)
-    title = Column('title', Text, primary_key=True, nullable=True)
+    title = Column('title', Text, nullable=True)
     akas = Column('akas', JSON, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
+
+
+# Local materialized view table
+class AwsEc2InstanceLocal(db.BaseEphemeralModels, FormatMixins):
+    __tablename__ = 'aws_ec2_instance_local'
+    instance_id = Column('instance_id', Text, nullable=True)
+    arn = Column('arn', Text, primary_key=True, nullable=True)
+    instance_type = Column('instance_type', Text, nullable=True)
+    instance_state = Column('instance_state', Text, nullable=True)
+    monitoring_state = Column('monitoring_state', Text, nullable=True)
+    disable_api_termination = Column('disable_api_termination', Boolean, nullable=True)
+    cpu_options_core_count = Column('cpu_options_core_count', BigInteger, nullable=True)
+    cpu_options_threads_per_core = Column('cpu_options_threads_per_core', BigInteger, nullable=True)
+    ebs_optimized = Column('ebs_optimized', Boolean, nullable=True)
+    hypervisor = Column('hypervisor', Text, nullable=True)
+    iam_instance_profile_arn = Column('iam_instance_profile_arn', Text, nullable=True)
+    iam_instance_profile_id = Column('iam_instance_profile_id', Text, nullable=True)
+    image_id = Column('image_id', Text, nullable=True)
+    instance_initiated_shutdown_behavior = Column('instance_initiated_shutdown_behavior', Text, nullable=True)
+    kernel_id = Column('kernel_id', Text, nullable=True)
+    key_name = Column('key_name', Text, nullable=True)
+    launch_time = Column('launch_time', TIMESTAMP, nullable=True)
+    metadata_options = Column('metadata_options', JSON, nullable=True)
+    outpost_arn = Column('outpost_arn', Text, nullable=True)
+    placement_availability_zone = Column('placement_availability_zone', Text, nullable=True)
+    placement_group_name = Column('placement_group_name', Text, nullable=True)
+    placement_tenancy = Column('placement_tenancy', Text, nullable=True)
+    private_ip_address = Column('private_ip_address', psql.INET, nullable=True)
+    private_dns_name = Column('private_dns_name', Text, nullable=True)
+    public_dns_name = Column('public_dns_name', Text, nullable=True)
+    public_ip_address = Column('public_ip_address', psql.INET, nullable=True)
+    ram_disk_id = Column('ram_disk_id', Text, nullable=True)
+    root_device_name = Column('root_device_name', Text, nullable=True)
+    root_device_type = Column('root_device_type', Text, nullable=True)
+    source_dest_check = Column('source_dest_check', Boolean, nullable=True)
+    sriov_net_support = Column('sriov_net_support', Text, nullable=True)
+    state_code = Column('state_code', BigInteger, nullable=True)
+    subnet_id = Column('subnet_id', Text, nullable=True)
+    user_data = Column('user_data', Text, nullable=True)
+    virtualization_type = Column('virtualization_type', Text, nullable=True)
+    vpc_id = Column('vpc_id', Text, nullable=True)
+    elastic_gpu_associations = Column('elastic_gpu_associations', JSON, nullable=True)
+    elastic_inference_accelerator_associations = Column('elastic_inference_accelerator_associations', JSON, nullable=True)
+    block_device_mappings = Column('block_device_mappings', JSON, nullable=True)
+    network_interfaces = Column('network_interfaces', JSON, nullable=True)
+    product_codes = Column('product_codes', JSON, nullable=True)
+    security_groups = Column('security_groups', JSON, nullable=True)
+    instance_status = Column('instance_status', JSON, nullable=True)
+    tags_src = Column('tags_src', JSON, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
+    title = Column('title', Text, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)
+
+
+cache = select(AwsEc2Instance).select_from(AwsEc2Instance)
+create_materialized_view('aws_ec2_instance_local', cache, db.metadata_materialized)

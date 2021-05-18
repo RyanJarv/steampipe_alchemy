@@ -2,6 +2,10 @@ import json
 
 
 class FormatMixins:
+    def __init__(self, table):
+        return s
+
+
     def to_dict(self):
         d = {}
         for column in self.__table__.columns:
