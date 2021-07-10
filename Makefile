@@ -86,3 +86,17 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+
+docker/dev/build:
+	docker build -f Dockerfile.dev -t steampipe-alchemy .
+
+docker/dev/run:
+	docker run -it \
+		-e AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY \
+		-e AWS_SESSION_TOKEN \
+		-v "${PWD}:/usr/src/steam" \
+		steampipe-alchemy 
+
+docker/dev: docker/dev/build docker/dev/run
+
