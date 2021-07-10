@@ -8,7 +8,8 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-from typing import TypeVar, Iterable, Union, Generic, List, Optional, TypedDict
+from typing import TypeVar, Iterable, Union, Generic, List, Optional
+from typing_extensions import TypedDict
 from enum import Enum
 
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
