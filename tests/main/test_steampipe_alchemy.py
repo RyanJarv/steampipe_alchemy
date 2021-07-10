@@ -92,7 +92,7 @@ def test_this(region, vpc_ids):
 def test_deprecated_function_prints_warning():
     steampipe_alchemy.query(AwsVpc.vpc_id)
 
-## TODO:
+# TODO:
 # def test_status_configures_dbconn_when_postgres_is_running()
 # def test_status_does_not_configure_dbconn_when_postgres_is_stopped()
 # def test_status_does_not_configure_dbconn_when_postgres_is_in_unknown_state()
