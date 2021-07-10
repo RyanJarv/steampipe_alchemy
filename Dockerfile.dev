@@ -1,0 +1,22 @@
+FROM python:3.9-slim-buster
+
+WORKDIR /usr/src/steampipe_alchemy
+
+ENV LANG=C.UTF-8 \
+  LC_ALL=C.UTF-8 \
+  PATH="${PATH}:/root/.poetry/bin"
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+    git \
+    make \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY ./setup.* ./requirements* ./
+
+RUN pip install -U pip
+RUN pip install -r requirements_dev.txt
+
+
+COPY . .
+CMD ["python", "-m", "steampipe_alchemy"]
