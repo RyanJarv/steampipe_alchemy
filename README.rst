@@ -35,24 +35,23 @@ Install, setup, and start steampipe with the aws plugin.
 .. code-block:: python
 
     # We're assuming the the AWS credentials are set in the environment here.
-    from steampipe_alchemy as sa
+    from steampipe_alchemy import SteamPipe
 
-    sa.install(['aws'])  # Downloads and installs steampipe with the aws plugin.
-    sa.update_config(aws={ #  Modifies ~/.local/share/steampipe_alchemy/config/aws.spc
+    steam = SteamPipe()
+    steam.install(['aws'])  # Downloads and installs steampipe with the aws plugin.
+    steam.update_config(aws={ #  Modifies ~/.local/share/steampipe_alchemy/config/aws.spc
         "plugin": "aws",
         "regions": ['us-east-1', 'us-west-1', 'us-west-2']
     })
-    sa.start()  # Steampipe will be stopped when the script exits or when stop() is called.
+    steam.start()  # Steampipe will be stopped when the script exits or when stop() is called.
 
 We can then use the SQLAlchemy models to query AWS.
 
 .. code-block:: python
 
-    from steampipe_alchemy import query
     from steampipe_alchemy.models import AwsVpc
 
-
-    for i in query(AwsVpc).limit(2):
+    for i in steam.query(AwsVpc).limit(2):
         print(i.vpc_id + ':')
         print('  CIDR: ' + i.cidr_block)
         print('  Region: ' + i.region)
@@ -72,16 +71,23 @@ The models also have to_json and to_dict mixins:
 
 .. code-block:: python
 
-    first_vpc = query(AwsVpc).first().to_dict()
+    first_vpc = steam.query(AwsVpc).first().to_dict()
     print(first_vpc['cidr_block'])
 
 
-The function steampipe_alchemy.query is a small wrapper around sqlalchemy.orm.Query. It is setup to use the steampipe sqlalchemy session and has type annotations which enable IDE completion on both the Model results and the Query class.
+The function SteamPipe.query is a small wrapper around sqlalchemy.orm.Query. It is setup to use the steampipe sqlalchemy
+session and has type annotations which enable IDE completion on both the Model results and the Query class.
 
 
 .. image:: https://raw.githubusercontent.com/RyanJarv/steampipe_alchemy/main/docs/images/completion.png
 
 Models are located in ``steampipe_alchemy.models`` and are automatically generated with ``./scripts/generate_models.py``.
+
+Prerequisites
+-------------
+
+* MacOS or Linux.
+* Python3.7 or newer.
 
 Credits
 -------
