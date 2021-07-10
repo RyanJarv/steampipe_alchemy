@@ -8,18 +8,18 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-from typing import TypeVar, Iterable, Union, Generic, List, Optional
+from typing import TypeVar, Iterable, Union, Generic, List, Optional, TypedDict
 from enum import Enum
 
+from sqlalchemy import engine
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy import MetaData, create_engine, orm
+from dataclasses import dataclass
+
+from steampipe_alchemy.utils import deprecated
 
 metadata = MetaData()
 Base: 'DeclarativeMeta' = declarative_base(metadata=metadata)
-
-DATABASE_CONNECTION_PATH: Optional[str] = None
-engine: Optional['orm.Engine'] = None
-db: Optional['orm.sessionmaker'] = None
 
 T = TypeVar('T')
 
@@ -150,130 +150,230 @@ class Query(Generic[T], orm.Query):
         ...
 
 
-def query(resource: T) -> Union[Iterable[T], Query[T]]:
-    """Wrapper around Session.query that supports type annotations."""
-    if not db:
-        status()
-    return db.query(resource)
+AwsConfig = TypedDict('AwsConfig', {
+    "regions": List[str],
+    "profile": str,
+})
 
 
-home_dir = Path('~/.local/share/steampipe_alchemy').expanduser().absolute()
-bin_dir = Path('~/.local/share/steampipe_alchemy/bin').expanduser().absolute()
+class UnexpectedStateException(Exception):
+    pass
 
 
-def update_config(**kwargs):
-    config = ""
-    for name, conf in kwargs.items():
-        config += f"""
-            connection "{name}" {{
-                {os.linesep.join((f'{k} = {json.dumps(v)}' for k, v in conf.items()))}
-            }}
-        """
-    Path(home_dir / 'config/aws.spc').write_text(config)
-
-    state, _ = status()
-    if state == SteampipeStatus.RUNNING:
-        restart()
-
-
-class SteampipeStatus(Enum):
+class ServiceState(Enum):
+    UNKNOWN = 0
     STOPPED = 1
     RUNNING = 2
 
 
-def status() -> (SteampipeStatus, str):
-    out = subprocess.check_output([bin_dir/'steampipe', 'service', 'status', '--install-dir', str(home_dir)])
-    if b'NOT running' in out:
-        status = SteampipeStatus.STOPPED
-    elif b'service is now running' in out:
-        status = SteampipeStatus.RUNNING
-    else:
-        raise UserWarning(f"Steampipe is in unknown state: {str(out)}")
-    return status, out
+@dataclass()
+class ServiceStatus:
+    state: ServiceState = ServiceState.UNKNOWN
+    reason: str = ""
 
 
-def restart():
-    stop()
-    start()
+class SteamPipe:
+    home_dir = Path('~/.local/share/steampipe_alchemy').expanduser().absolute()
+    bin_dir = Path('~/.local/share/steampipe_alchemy/bin').expanduser().absolute()
+
+    def __init__(self):
+        self.config = Path(self.home_dir / 'config/aws.spc')
+
+        self.engine: Optional['engine.Engine'] = None
+        self.db: Optional['orm.session.Session'] = None
+        self.Session: Optional['orm.sessionmaker'] = None
+        self.database_conn: Optional[str] = None
+        self._status: ServiceStatus = ServiceStatus()
+
+        self.status()
+
+    def query(self, resource: T) -> Union[Iterable[T], Query[T]]:
+        """Wrapper around Session.query that supports type annotations."""
+        if not self.db:
+            raise UnexpectedStateException("Steampipe must be in the started state to call this function.")
+        return self.db.query(resource)
+
+    def update_config(self, aws: Optional[AwsConfig] = None, **kwargs):
+        if aws:
+            kwargs['aws'] = aws
+
+        config = ""
+        for name, conf in kwargs.items():
+            config += f"""
+                connection "{name}" {{
+                    {os.linesep.join((f'{k} = {json.dumps(v)}' for k, v in conf.items()))}
+                }}
+            """
+        self.config.write_text(config)
+
+        if self._status == ServiceState.RUNNING:
+            self.restart()
+
+    def status(self) -> ServiceStatus:
+        if not (self.bin_dir/'steampipe').is_file():
+            self._status = ServiceStatus(
+                state=ServiceState.UNKNOWN,
+                reason=f"[WARN] Could not find the steampipe binary at {self.bin_dir}"
+            )
+            return self._status
+
+        out = subprocess.check_output([self.bin_dir/'steampipe', 'service', 'status', '--install-dir',
+                                       str(self.home_dir)])
+        if b'NOT running' in out:
+            self._status = ServiceStatus(
+                state=ServiceState.STOPPED,
+                reason=out,
+            )
+        elif b'service is now running' in out:
+            self.set_db(out)
+            self._status = ServiceStatus(
+                state=ServiceState.RUNNING,
+                reason=out,
+            )
+        else:
+            self._status = ServiceStatus(
+                state=ServiceState.UNKNOWN,
+                reason=f"steampipe is in an unknown state: {out}"
+            )
+        return self._status
+
+    def restart(self):
+        self.stop()
+        self.start()
+
+    def set_db(self, status_out: bytes):
+        self.database_conn = list(filter(lambda l: b'postgres://steampipe' in l, status_out.splitlines()))
+        self.database_conn = self.database_conn[0].decode().strip()
+
+        # sqlalchemy expects postgresql:// rather then postgres://
+        database_conn = self.database_conn.replace('postgres', 'postgresql')
+
+        self.engine = create_engine(database_conn)
+        self.Session = orm.sessionmaker(self.engine)
+        self.db = self.Session()
+
+    def start(self, **kwargs) -> ServiceStatus:
+        if self.status().state == ServiceState.RUNNING:
+            print("[WARN] Steampipe was running when we tried to start it. This is most likely a orphaned session. "
+                  "It will be shutdown when we exit.", file=sys.stderr)
+            return self._status
+        else:
+            try:
+                out = subprocess.check_output([str(self.bin_dir/'steampipe'), 'service', 'start', '--install-dir',
+                                               str(self.home_dir), '--database-listen', 'local'],
+                                              env={**os.environ, **kwargs})
+            except subprocess.CalledProcessError as e:
+                raise UnexpectedStateException(ServiceStatus(
+                    reason=f"Stdout: {str(e.stdout)}\nStderr: {str(e.stderr)}", state=ServiceState.UNKNOWN))
+            except FileNotFoundError as e:
+                raise UnexpectedStateException(ServiceStatus(
+                    reason=f"No steampipe binary found at '{e.filename}'", state=ServiceState.UNKNOWN))
+            status = self.status()
+            if status.state != ServiceState.RUNNING:
+                status.reason = f"Output of starting steampipe: {str(out)}\n\n" + \
+                                f"Output of checking status: {status.reason}\n\n"
+                raise UnexpectedStateException(status)
+        atexit.register(self.stop)
+        return self._status
+
+    def stop(self):
+        subprocess.check_output([self.bin_dir / 'steampipe', 'service', 'stop', '--install-dir', str(self.home_dir),
+                                 '--force'])
+
+    def install(self, plugins: List[str] = []):
+        os.makedirs(self.bin_dir, exist_ok=True)
+        if os.uname().sysname == 'Darwin':
+            self.get_darwin()
+        elif os.uname().sysname == 'Linux':
+            self.get_linux()
+        os.chmod(self.bin_dir / 'steampipe', mode=0o0775)
+
+        for plugin in plugins:
+            self.install_plugin(plugin)
+
+    def install_plugin(self, plugin: str):
+        subprocess.check_output([
+            self.bin_dir / 'steampipe', 'plugin', 'install', '--install-dir', str(self.home_dir), plugin])
+
+    @staticmethod
+    def get_latest() -> str:
+        resp = urllib.request.urlopen('https://api.github.com/repos/turbot/steampipe/releases/latest')
+        resp = json.loads(resp.read())
+        return resp['name']
+
+    def get_linux(self):
+        uri = f"https://github.com/turbot/steampipe/releases/download/{self.get_latest()}/steampipe_linux_amd64.tar.gz"
+        resp = urllib.request.urlopen(uri)
+
+        with open(self.bin_dir / 'steampipe.tar.gz', 'wb') as f:
+            f.write(resp.read())
+
+        with tarfile.open(self.bin_dir / 'steampipe.tar.gz', 'r') as z:
+            z.extractall(self.bin_dir)
+
+    def get_darwin(self):
+        uri = f"https://github.com/turbot/steampipe/releases/download/{self.get_latest()}/steampipe_darwin_amd64.zip"
+        resp = urllib.request.urlopen(uri)
+
+        with open(self.bin_dir / 'steampipe.zip', 'wb') as f:
+            f.write(resp.read())
+
+        with zipfile.ZipFile(self.bin_dir / 'steampipe.zip', 'r') as z:
+            z.extractall(self.bin_dir)
 
 
-def set_db(status_out: bytes) -> bool:
-    global engine, Session, db
-
-    DATABASE_CONNECTION_PATH = list(filter(lambda l: b'postgres://steampipe' in l, status_out.splitlines()))
-    try:
-        DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH[0].decode().strip()
-    except IndexError:
-        return False
-
-    # sqlalchemy expects postgresql:// rather then postgres://
-    DATABASE_CONNECTION_PATH = DATABASE_CONNECTION_PATH.replace('postgres', 'postgresql')
-
-    engine = create_engine(DATABASE_CONNECTION_PATH)
-    Session = orm.sessionmaker(engine)
-    db = Session()
-    return True
+# !! The functions below where deprecated in favor of the SteamPipe class
+steam: Optional[SteamPipe] = None
 
 
-def start(**kwargs):
-    state, out = status()
-    if state == SteampipeStatus.RUNNING:
-        print("[WARN] Steampipe was running when we tried to start it. This is most likely a orphaned session. "
-              "It will be shutdown when we exit.", file=sys.stderr)
-    else:
-        out = subprocess.check_output(
-            [bin_dir/'steampipe', 'service', 'start', '--install-dir', str(home_dir), '--database-listen', 'local'],
-            env={**os.environ, **kwargs},
-        )
-        set_db(out)
-    atexit.register(stop)
+@deprecated
+def query(*args, **kwargs):
+    global steam
+    if not steam:
+        steam = SteamPipe()
+    print(steam)
+    resp = steam.query(*args, **kwargs)
+    print(resp)
+    return resp
 
 
+@deprecated
+def update_config(*args, **kwargs):
+    global steam
+    if not steam:
+        steam = SteamPipe()
+    return steam.update_config(*args, **kwargs)
+
+
+@deprecated
+def install(*args, **kwargs):
+    global steam
+    if not steam:
+        steam = SteamPipe()
+    return steam.install(*args, **kwargs)
+
+
+@deprecated
+def start(**kwargs) -> ServiceStatus:
+    global steam
+    if not steam:
+        steam = SteamPipe()
+    resp = steam.start(**kwargs)
+    return resp
+
+
+
+@deprecated
 def stop():
-    subprocess.check_output([bin_dir / 'steampipe', 'service', 'stop', '--install-dir', str(home_dir), '--force'])
+    global steam
+    if not steam:
+        steam = SteamPipe()
+    return steam.stop()
 
 
-def get_latest() -> str:
-    resp = urllib.request.urlopen('https://api.github.com/repos/turbot/steampipe/releases/latest')
-    resp = json.loads(resp.read())
-    return resp['name']
-
-
-def install(plugins: List[str]):
-    os.makedirs(bin_dir, exist_ok=True)
-    if os.uname().sysname == 'Darwin':
-        get_darwin()
-    elif os.uname().sysname == 'Linux':
-        get_linux()
-    os.chmod(bin_dir / 'steampipe', mode=0o0775)
-
-    for plugin in plugins:
-        install_plugin(plugin)
-
-
-def install_plugin(plugin: str):
-    subprocess.check_output([bin_dir / 'steampipe', 'plugin', 'install', '--install-dir', str(home_dir), plugin])
-
-
-def get_linux():
-    ver = get_latest()
-    uri = f"https://github.com/turbot/steampipe/releases/download/{ver}/steampipe_linux_amd64.tar.gz"
-    resp = urllib.request.urlopen(uri)
-
-    with open(bin_dir / 'steampipe.tar.gz', 'wb') as f:
-        f.write(resp.read())
-
-    with tarfile.open(bin_dir / 'steampipe.tar.gz', 'r') as z:
-        z.extractall(bin_dir)
-
-
-def get_darwin():
-    ver = get_latest()
-    uri = f"https://github.com/turbot/steampipe/releases/download/{ver}/steampipe_darwin_amd64.zip"
-    resp = urllib.request.urlopen(uri)
-
-    with open(bin_dir / 'steampipe.zip', 'wb') as f:
-        f.write(resp.read())
-
-    with zipfile.ZipFile(bin_dir / 'steampipe.zip', 'r') as z:
-        z.extractall(bin_dir)
+@deprecated
+def install_plugin(*args, **kwargs):
+    global steam
+    if not steam:
+        steam = SteamPipe()
+    return steam.install_plugin(*args, **kwargs)

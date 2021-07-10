@@ -1,6 +1,6 @@
 FROM python:3.9-slim-buster
 
-WORKDIR /usr/src/steampipe_alchemy
+WORKDIR /usr/src/steam
 
 ENV LANG=C.UTF-8 \
   LC_ALL=C.UTF-8 \
@@ -10,6 +10,8 @@ RUN apt-get update && \
   apt-get install -y --no-install-recommends \
     git \
     make \
+    curl \
+    jq \
   && rm -rf /var/lib/apt/lists/*
 
 COPY ./setup.* ./requirements* ./
@@ -17,6 +19,17 @@ COPY ./setup.* ./requirements* ./
 RUN pip install -U pip
 RUN pip install -r requirements_dev.txt
 
+RUN useradd -m -s /bin/bash steam
+
+RUN name="$(curl https://api.github.com/repos/turbot/steampipe/releases/latest|jq '.name')" \
+	&& curl "https://github.com/turbot/steampipe/releases/download/${name}/steampipe_linux_amd64.tar.gz" > steampipe.tar.gz \
+	&& tar -C ~/.local/share/steampipe_alchemy/bin -xvf steampipe.tar.gz
+
+RUN ~/.local/share/steampipe_alchemy/bin/steampipe --install-dir ~/.local/share/steampipe_alchemy plugin install aws
 
 COPY . .
-CMD ["python", "-m", "steampipe_alchemy"]
+USER steam
+CMD ["python", "-m", "steam"]
+
+COPY . .
+CMD ["bash", "-l"]
