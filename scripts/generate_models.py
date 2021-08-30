@@ -52,11 +52,31 @@ with engine.connect() as conn:
     """))
     tables = list(map(lambda i: str(i[0]), result.all()))
 
-    init_template = ""
+    tables = [
+        t for t in tables
+        if ('_metric_' not in t)
+           and ('_cost_' not in t)
+           and ('aws_vpc_flow_log_event' != t)
+    ]
+
+    table_list = ['    ' + snake_case(t) + ',' for t in tables]
+    table_list = '\n'.join(table_list)
+    (ModelsDir / Path(f'all.py')).write_text(
+        f"""
+from steampipe_alchemy.models import *
+all = [
+    {table_list}
+]
+    """
+    )
+
+    init_template = "from steampipe_alchemy.models.all import all\n"
     for table in tables:
         init_template += f"from steampipe_alchemy.models.{table} import {snake_case(table)}\n"
 
+
     (ModelsDir/'__init__.py').write_text(init_template)
+
 
     for table in tables:
         template = f"""
@@ -129,4 +149,4 @@ class {snake_case(table)}(Base, FormatMixins):
         f.write_text(template)
 
 
-subprocess.check_output(['git', 'apply', './patches/models.diff'])
+#subprocess.check_output(['git', 'apply', './patches/models.diff'])

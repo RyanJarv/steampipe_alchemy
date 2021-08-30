@@ -7,10 +7,10 @@ from steampipe_alchemy import Base
 
 class AwsRegion(Base, FormatMixins):
     __tablename__ = 'aws_region'
-    name = Column('name', Text, primary_key=True, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
     opt_in_status = Column('opt_in_status', Text, nullable=True)
     title = Column('title', Text, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
+    name = Column('name', Text, primary_key=True, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)

@@ -277,8 +277,12 @@ class SteamPipe:
         return self._status
 
     def stop(self):
-        subprocess.check_output([self.bin_dir / 'steampipe', 'service', 'stop', '--install-dir', str(self.home_dir),
+        try:
+            subprocess.check_output([self.bin_dir / 'steampipe', 'service', 'stop', '--install-dir', str(self.home_dir),
                                  '--force'])
+        except Exception as e:
+            import pdb; pdb.set_trace()
+            raise e
 
     def install(self, plugins: List[str] = []):
         os.makedirs(self.bin_dir, exist_ok=True)

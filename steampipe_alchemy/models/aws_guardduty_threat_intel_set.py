@@ -7,15 +7,15 @@ from steampipe_alchemy import Base
 
 class AwsGuarddutyThreatIntelSet(Base, FormatMixins):
     __tablename__ = 'aws_guardduty_threat_intel_set'
-    name = Column('name', Text, primary_key=True, nullable=True)
-    threat_intel_set_id = Column('threat_intel_set_id', Text, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
     detector_id = Column('detector_id', Text, nullable=True)
     format = Column('format', Text, nullable=True)
     location = Column('location', Text, nullable=True)
     status = Column('status', Text, nullable=True)
     title = Column('title', Text, nullable=True)
-    tags = Column('tags', JSON, nullable=True)
-    akas = Column('akas', JSON, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
+    name = Column('name', Text, primary_key=True, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
+    threat_intel_set_id = Column('threat_intel_set_id', Text, nullable=True)
