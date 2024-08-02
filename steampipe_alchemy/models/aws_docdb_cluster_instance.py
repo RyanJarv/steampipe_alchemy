@@ -1,0 +1,52 @@
+from sqlalchemy import Column
+from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
+from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
+
+from steampipe_alchemy import Base
+
+class AwsDocdbClusterInstance(Base, FormatMixins):
+    __tablename__ = 'aws_docdb_cluster_instance'
+    vpc_security_groups = Column('vpc_security_groups', JSON, nullable=True)
+    backup_retention_period = Column('backup_retention_period', BigInteger, nullable=True)
+    copy_tags_to_snapshot = Column('copy_tags_to_snapshot', Boolean, nullable=True)
+    endpoint_port = Column('endpoint_port', BigInteger, nullable=True)
+    instance_create_time = Column('instance_create_time', TIMESTAMP, nullable=True)
+    latest_restorable_time = Column('latest_restorable_time', TIMESTAMP, nullable=True)
+    promotion_tier = Column('promotion_tier', BigInteger, nullable=True)
+    publicly_accessible = Column('publicly_accessible', Boolean, nullable=True)
+    storage_encrypted = Column('storage_encrypted', Boolean, nullable=True)
+    enabled_cloudwatch_logs_exports = Column('enabled_cloudwatch_logs_exports', JSON, nullable=True)
+    pending_modified_values = Column('pending_modified_values', JSON, nullable=True)
+    status_infos = Column('status_infos', JSON, nullable=True)
+    subnets = Column('subnets', JSON, nullable=True)
+    tags_src = Column('tags_src', JSON, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    sp_ctx = Column('sp_ctx', JSON, nullable=True)
+    _ctx = Column('_ctx', JSON, nullable=True)
+    engine_version = Column('engine_version', Text, nullable=True)
+    title = Column('title', Text, primary_key=True, nullable=True)
+    kms_key_id = Column('kms_key_id', Text, nullable=True)
+    sp_connection_name = Column('sp_connection_name', Text, nullable=True)
+    preferred_backup_window = Column('preferred_backup_window', Text, nullable=True)
+    preferred_maintenance_window = Column('preferred_maintenance_window', Text, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    db_instance_identifier = Column('db_instance_identifier', Text, nullable=True)
+    db_instance_arn = Column('db_instance_arn', Text, nullable=True)
+    db_cluster_identifier = Column('db_cluster_identifier', Text, nullable=True)
+    db_instance_status = Column('db_instance_status', Text, nullable=True)
+    db_instance_class = Column('db_instance_class', Text, nullable=True)
+    dbi_resource_id = Column('dbi_resource_id', Text, nullable=True)
+    availability_zone = Column('availability_zone', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    ca_certificate_identifier = Column('ca_certificate_identifier', Text, nullable=True)
+    vpc_id = Column('vpc_id', Text, nullable=True)
+    db_subnet_group_arn = Column('db_subnet_group_arn', Text, nullable=True)
+    db_subnet_group_description = Column('db_subnet_group_description', Text, nullable=True)
+    db_subnet_group_name = Column('db_subnet_group_name', Text, nullable=True)
+    db_subnet_group_status = Column('db_subnet_group_status', Text, nullable=True)
+    endpoint_address = Column('endpoint_address', Text, nullable=True)
+    endpoint_hosted_zone_id = Column('endpoint_hosted_zone_id', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)
+    engine = Column('engine', Text, nullable=True)

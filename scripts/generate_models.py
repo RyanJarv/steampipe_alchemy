@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
 
-import subprocess
+import sys
 from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 
+from os import environ
+from steampipe_alchemy import AwsConfig, SteamPipe
 from sqlalchemy import MetaData, text, create_engine
 
+
 metadata = MetaData()
-engine = create_engine("postgresql://steampipe:a4eb-4e8b-b0f8@localhost:9193/steampipe?sslmode=disable", echo=True, future=True)
+steam = SteamPipe()
+steam.install(['aws'])
+steam.update_config(aws=AwsConfig(
+    profile=environ.get('AWS_PROFILE', 'default'),
+    regions=['us-east-1'],
+))
+steam.start()
 
 type_mapping = {
     'jsonb': 'JSON',
     'text': 'Text',
     'boolean': 'Boolean',
     'timestamp without time zone': 'TIMESTAMP',
+    'timestamp with time zone': 'TIMESTAMP',
     'bigint': 'BigInteger',
     'cidr': 'psql.CIDR',
     'double precision': 'psql.DOUBLE_PRECISION',
@@ -26,6 +37,9 @@ primary_keys = {
     'aws_iam_credential_report': 'user_arn',
     'aws_iam_access_advisor': 'principal_arn',
     'aws_iam_account_password_policy': 'account_id',
+    'aws_iam_policy_attachment': 'policy_arn',
+    'aws_emr_block_public_access_configuration': 'creation_date',
+    'aws_ecr_image': ['repository_name', 'image_digest'],
 }
 
 RootDir = Path(__file__).parent.parent
@@ -44,7 +58,7 @@ def snake_case(s: str) -> str:
     return ''.join(map(lambda p: p.capitalize(), s.split('_')))
 
 
-with engine.connect() as conn:
+with steam.engine.connect() as conn:
     result = conn.execute(text("""
         select table_name
             from information_schema.tables
@@ -52,33 +66,43 @@ with engine.connect() as conn:
     """))
     tables = list(map(lambda i: str(i[0]), result.all()))
 
+    # import pdb; pdb.set_trace()
     tables = [
         t for t in tables
         if ('_metric_' not in t)
            and ('_cost_' not in t)
-           and ('aws_vpc_flow_log_event' != t)
+           and ('statistics' not in t)
+           and ('notification' not in t)
+           and ('_report' not in t)
+           and (t not in ['aws_vpc_flow_log_event', 'aws_pricing_product'])
     ]
 
-    table_list = ['    ' + snake_case(t) + ',' for t in tables]
+    # table_map = {
+    #     f'"{snake_case(table).removeprefix("Aws")}"': snake_case(table)
+    #     for table in tables
+    # }
+    table_list = [f'  "{snake_case(t).removeprefix("Aws")}": {snake_case(t)},' for t in tables[:-1]]
+    table_list.append(f'  "{snake_case(tables[-1]).removeprefix("Aws")}": {snake_case(tables[-1])}')
     table_list = '\n'.join(table_list)
-    (ModelsDir / Path(f'all.py')).write_text(
-        f"""
-from steampipe_alchemy.models import *
-all = [
-    {table_list}
-]
-    """
-    )
 
-    init_template = "from steampipe_alchemy.models.all import all\n"
+    # (ModelsDir / Path(f'all.py')).write_text( )
+
+    init_template = ""
     for table in tables:
         init_template += f"from steampipe_alchemy.models.{table} import {snake_case(table)}\n"
+    init_template += f"""
+
+all = {{
+{table_list}
+}}
+        """
 
 
     (ModelsDir/'__init__.py').write_text(init_template)
 
 
     for table in tables:
+        print(table, end=': ')
         template = f"""
 from sqlalchemy import Column
 from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
@@ -132,7 +156,11 @@ class {snake_case(table)}(Base, FormatMixins):
 
         # This is checked last to avoid adding extra entries to the primary_keys map
         if not primary_key:
-            primary_key = primary_keys[table]
+            try:
+                primary_key = primary_keys[table]
+            except KeyError:
+                print(f"Need to add primary key for: {table}")
+                continue
 
         for name, type, _ in columns:
             if name == primary_key or ((primary_key is list) and primary_key in list):
@@ -140,13 +168,19 @@ class {snake_case(table)}(Base, FormatMixins):
     {normalize_attr(name)} = Column('{name}', {type_mapping[type]}, primary_key=True, nullable=True)
                 """
             else:
-                row = f"""
+                try:
+                    row = f"""
     {normalize_attr(name)} = Column('{name}', {type_mapping[type]}, nullable=True)
-                """
+                    """
+                except KeyError:
+                    print(f"Need to add type mapping for: {type} in {table}")
+                    continue
+
 
             template += row.lstrip('\t ').rstrip('\n\t ')
         f = (ModelsDir/Path(f'{table}.py'))
         f.write_text(template)
+        print('done')
 
 
 #subprocess.check_output(['git', 'apply', './patches/models.diff'])

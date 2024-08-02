@@ -1,0 +1,50 @@
+from sqlalchemy import Column
+from sqlalchemy.types import JSON, Text, Boolean, TIMESTAMP, BigInteger
+from sqlalchemy.dialects import postgresql as psql
+from steampipe_alchemy.mixins import FormatMixins
+
+from steampipe_alchemy import Base
+
+class AwsMqBroker(Base, FormatMixins):
+    __tablename__ = 'aws_mq_broker'
+    subnet_ids = Column('subnet_ids', JSON, nullable=True)
+    created = Column('created', TIMESTAMP, nullable=True)
+    publicly_accessible = Column('publicly_accessible', Boolean, nullable=True)
+    auto_minor_version_upgrade = Column('auto_minor_version_upgrade', Boolean, nullable=True)
+    actions_required = Column('actions_required', JSON, nullable=True)
+    broker_instances = Column('broker_instances', JSON, nullable=True)
+    configurations = Column('configurations', JSON, nullable=True)
+    data_replication_metadata = Column('data_replication_metadata', JSON, nullable=True)
+    encryption_options = Column('encryption_options', JSON, nullable=True)
+    ldap_server_metadata = Column('ldap_server_metadata', JSON, nullable=True)
+    logs = Column('logs', JSON, nullable=True)
+    pending_ldap_server_metadata = Column('pending_ldap_server_metadata', JSON, nullable=True)
+    maintenance_window_start_time = Column('maintenance_window_start_time', JSON, nullable=True)
+    pending_data_replication_metadata = Column('pending_data_replication_metadata', JSON, nullable=True)
+    pending_security_groups = Column('pending_security_groups', JSON, nullable=True)
+    security_groups = Column('security_groups', JSON, nullable=True)
+    users = Column('users', JSON, nullable=True)
+    tags = Column('tags', JSON, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    sp_ctx = Column('sp_ctx', JSON, nullable=True)
+    _ctx = Column('_ctx', JSON, nullable=True)
+    broker_id = Column('broker_id', Text, nullable=True)
+    arn = Column('arn', Text, primary_key=True, nullable=True)
+    broker_state = Column('broker_state', Text, nullable=True)
+    deployment_mode = Column('deployment_mode', Text, nullable=True)
+    title = Column('title', Text, nullable=True)
+    host_instance_type = Column('host_instance_type', Text, nullable=True)
+    authentication_strategy = Column('authentication_strategy', Text, nullable=True)
+    data_replication_mode = Column('data_replication_mode', Text, nullable=True)
+    engine_type = Column('engine_type', Text, nullable=True)
+    engine_version = Column('engine_version', Text, nullable=True)
+    pending_authentication_strategy = Column('pending_authentication_strategy', Text, nullable=True)
+    pending_data_replication_mode = Column('pending_data_replication_mode', Text, nullable=True)
+    pending_engine_version = Column('pending_engine_version', Text, nullable=True)
+    pending_host_instance_type = Column('pending_host_instance_type', Text, nullable=True)
+    sp_connection_name = Column('sp_connection_name', Text, nullable=True)
+    storage_type = Column('storage_type', Text, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    broker_name = Column('broker_name', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)

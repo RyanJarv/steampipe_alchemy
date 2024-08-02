@@ -7,7 +7,6 @@ from steampipe_alchemy import Base
 
 class AwsDmsReplicationInstance(Base, FormatMixins):
     __tablename__ = 'aws_dms_replication_instance'
-    instance_create_time = Column('instance_create_time', TIMESTAMP, nullable=True)
     auto_minor_version_upgrade = Column('auto_minor_version_upgrade', Boolean, nullable=True)
     pending_modified_values = Column('pending_modified_values', JSON, nullable=True)
     replication_instance_private_ip_addresses = Column('replication_instance_private_ip_addresses', JSON, nullable=True)
@@ -21,9 +20,11 @@ class AwsDmsReplicationInstance(Base, FormatMixins):
     publicly_accessible = Column('publicly_accessible', Boolean, nullable=True)
     allocated_storage = Column('allocated_storage', BigInteger, nullable=True)
     free_until = Column('free_until', TIMESTAMP, nullable=True)
-    region = Column('region', Text, nullable=True)
-    replication_instance_identifier = Column('replication_instance_identifier', Text, nullable=True)
-    account_id = Column('account_id', Text, nullable=True)
+    instance_create_time = Column('instance_create_time', TIMESTAMP, nullable=True)
+    sp_ctx = Column('sp_ctx', JSON, nullable=True)
+    _ctx = Column('_ctx', JSON, nullable=True)
+    sp_connection_name = Column('sp_connection_name', Text, nullable=True)
+    replication_instance_status = Column('replication_instance_status', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)
     replication_instance_class = Column('replication_instance_class', Text, nullable=True)
     engine_version = Column('engine_version', Text, nullable=True)
@@ -33,7 +34,9 @@ class AwsDmsReplicationInstance(Base, FormatMixins):
     preferred_maintenance_window = Column('preferred_maintenance_window', Text, nullable=True)
     replication_instance_private_ip_address = Column('replication_instance_private_ip_address', Text, nullable=True)
     replication_instance_public_ip_address = Column('replication_instance_public_ip_address', Text, nullable=True)
-    replication_instance_status = Column('replication_instance_status', Text, nullable=True)
+    replication_instance_identifier = Column('replication_instance_identifier', Text, nullable=True)
     secondary_availability_zone = Column('secondary_availability_zone', Text, nullable=True)
     title = Column('title', Text, nullable=True)
     partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)

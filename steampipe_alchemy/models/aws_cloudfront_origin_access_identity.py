@@ -7,14 +7,17 @@ from steampipe_alchemy import Base
 
 class AwsCloudfrontOriginAccessIdentity(Base, FormatMixins):
     __tablename__ = 'aws_cloudfront_origin_access_identity'
+    _ctx = Column('_ctx', JSON, nullable=True)
     akas = Column('akas', JSON, nullable=True)
-    arn = Column('arn', Text, primary_key=True, nullable=True)
-    s3_canonical_user_id = Column('s3_canonical_user_id', Text, nullable=True)
+    sp_ctx = Column('sp_ctx', JSON, nullable=True)
     caller_reference = Column('caller_reference', Text, nullable=True)
     comment = Column('comment', Text, nullable=True)
     etag = Column('etag', Text, nullable=True)
     title = Column('title', Text, nullable=True)
+    id = Column('id', Text, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
-    id = Column('id', Text, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
+    sp_connection_name = Column('sp_connection_name', Text, nullable=True)
+    arn = Column('arn', Text, primary_key=True, nullable=True)
+    s3_canonical_user_id = Column('s3_canonical_user_id', Text, nullable=True)

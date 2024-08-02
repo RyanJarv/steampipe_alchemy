@@ -7,7 +7,7 @@ from steampipe_alchemy import Base
 
 class AwsIamAccountSummary(Base, FormatMixins):
     __tablename__ = 'aws_iam_account_summary'
-    access_keys_per_user_quota = Column('access_keys_per_user_quota', BigInteger, nullable=True)
+    _ctx = Column('_ctx', JSON, nullable=True)
     account_access_keys_present = Column('account_access_keys_present', BigInteger, nullable=True)
     account_mfa_enabled = Column('account_mfa_enabled', Boolean, nullable=True)
     account_signing_certificates_present = Column('account_signing_certificates_present', BigInteger, nullable=True)
@@ -40,6 +40,9 @@ class AwsIamAccountSummary(Base, FormatMixins):
     users = Column('users', BigInteger, nullable=True)
     users_quota = Column('users_quota', BigInteger, nullable=True)
     versions_per_policy_quota = Column('versions_per_policy_quota', BigInteger, nullable=True)
+    sp_ctx = Column('sp_ctx', JSON, nullable=True)
+    access_keys_per_user_quota = Column('access_keys_per_user_quota', BigInteger, nullable=True)
+    account_id = Column('account_id', Text, primary_key=True, nullable=True)
+    sp_connection_name = Column('sp_connection_name', Text, nullable=True)
     partition = Column('partition', Text, nullable=True)
     region = Column('region', Text, nullable=True)
-    account_id = Column('account_id', Text, primary_key=True, nullable=True)

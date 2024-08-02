@@ -7,14 +7,17 @@ from steampipe_alchemy import Base
 
 class AwsRedshiftParameterGroup(Base, FormatMixins):
     __tablename__ = 'aws_redshift_parameter_group'
-    akas = Column('akas', JSON, nullable=True)
-    tags_src = Column('tags_src', JSON, nullable=True)
+    _ctx = Column('_ctx', JSON, nullable=True)
     parameters = Column('parameters', JSON, nullable=True)
+    tags_src = Column('tags_src', JSON, nullable=True)
     tags = Column('tags', JSON, nullable=True)
-    partition = Column('partition', Text, nullable=True)
-    region = Column('region', Text, nullable=True)
+    akas = Column('akas', JSON, nullable=True)
+    sp_ctx = Column('sp_ctx', JSON, nullable=True)
+    sp_connection_name = Column('sp_connection_name', Text, nullable=True)
     name = Column('name', Text, primary_key=True, nullable=True)
-    account_id = Column('account_id', Text, nullable=True)
+    partition = Column('partition', Text, nullable=True)
     description = Column('description', Text, nullable=True)
     family = Column('family', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
+    account_id = Column('account_id', Text, nullable=True)
     title = Column('title', Text, nullable=True)

@@ -7,14 +7,17 @@ from steampipe_alchemy import Base
 
 class AwsConfigConfigurationRecorder(Base, FormatMixins):
     __tablename__ = 'aws_config_configuration_recorder'
-    recording_group = Column('recording_group', JSON, nullable=True)
     status_recording = Column('status_recording', Boolean, nullable=True)
     status = Column('status', JSON, nullable=True)
     akas = Column('akas', JSON, nullable=True)
-    partition = Column('partition', Text, nullable=True)
-    region = Column('region', Text, nullable=True)
-    name = Column('name', Text, nullable=True)
+    recording_group = Column('recording_group', JSON, nullable=True)
+    sp_ctx = Column('sp_ctx', JSON, nullable=True)
+    _ctx = Column('_ctx', JSON, nullable=True)
     account_id = Column('account_id', Text, nullable=True)
+    sp_connection_name = Column('sp_connection_name', Text, nullable=True)
+    title = Column('title', Text, nullable=True)
     arn = Column('arn', Text, primary_key=True, nullable=True)
     role_arn = Column('role_arn', Text, nullable=True)
-    title = Column('title', Text, nullable=True)
+    name = Column('name', Text, nullable=True)
+    partition = Column('partition', Text, nullable=True)
+    region = Column('region', Text, nullable=True)
