@@ -8,11 +8,13 @@ credentials to be set in the environment, because of this these tests only run w
 The credentials used for https://github.com/RyanJarv/steampipe_alchemy are limited to only the permissions required here
 and run in an isolated account. If anything is added these permissions need to be updated.
 """
+import os
 
 import pytest
 import boto3
 
 import steampipe_alchemy
+from steampipe_alchemy import AwsConfig, ServiceState
 from steampipe_alchemy.models import AwsVpc
 
 regions = ['us-east-1', 'us-east-2', 'us-west-2', 'us-west-1']
@@ -26,23 +28,27 @@ def steam_class() -> steampipe_alchemy.SteamPipe:
 @pytest.fixture(scope='module')
 def steam(steam_class) -> steampipe_alchemy.SteamPipe:
     steam_class.install(['aws'])
-    steam_class.update_config(aws={
-        "plugin": "aws",
-        "regions": regions,
-    })
+    steam_class.update_config(aws=AwsConfig(
+        regions=regions,
+        profile=os.environ.get('AWS_PROFILE', 'default'),
+    ))
     status: steampipe_alchemy.ServiceStatus = steam_class.start()
-    assert status.state == status.state.RUNNING
+    assert status.state == ServiceState.RUNNING
     return steam_class
+
+
+def test_steam_status(steam: steampipe_alchemy.SteamPipe):
+    assert steam.status().state == ServiceState.RUNNING
 
 
 @pytest.fixture(scope='module')
 def steam_install_plugin(steam_class) -> steampipe_alchemy.SteamPipe:
     steam_class.install()
     steam_class.install_plugin('aws')
-    steam_class.update_config(aws={
-        "plugin": "aws",
-        "regions": regions,
-    })
+    steam_class.update_config(aws=AwsConfig(
+        profile=os.environ.get('AWS_PROFILE', 'default'),
+        regions=regions,
+    ))
     status: steampipe_alchemy.ServiceStatus = steam_class.start()
     assert status.state == status.state.RUNNING
     return steam_class
@@ -84,7 +90,7 @@ def vpc_ids(steam: steampipe_alchemy.SteamPipe):
 
 
 @pytest.mark.parametrize("region", regions)
-def test_this(region, vpc_ids):
+def test_vpc_ids(region, vpc_ids):
     for vpc in boto3.resource('ec2', region_name=region).vpcs.all():
         assert vpc.id in sorted(vpc_ids)
 

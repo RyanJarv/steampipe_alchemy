@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 import atexit
 import sys
@@ -24,7 +25,7 @@ Base: 'DeclarativeMeta' = declarative_base(metadata=metadata)
 T = TypeVar('T')
 
 
-class Query(Generic[T], orm.Query):
+class Query(Generic[T]):
     """Wrapper around sqlalchemy.orm.Query that supports type annotations.
 
     The Query object can be used as it self or as an iterable over the model. When used as an iterable
@@ -183,9 +184,6 @@ class SteamPipe:
         self.db: Optional['orm.session.Session'] = None
         self.Session: Optional['orm.sessionmaker'] = None
         self.database_conn: Optional[str] = None
-        self._status: ServiceStatus = ServiceStatus()
-
-        self.status()
 
     def query(self, resource: T) -> Union[Iterable[T], Query[T]]:
         """Wrapper around Session.query that supports type annotations."""
@@ -201,62 +199,67 @@ class SteamPipe:
         for name, conf in kwargs.items():
             config += f"""
                 connection "{name}" {{
+                    plugin  = "{name}"
                     {os.linesep.join((f'{k} = {json.dumps(v)}' for k, v in conf.items()))}
                 }}
             """
         self.config.write_text(config)
 
-        if self._status == ServiceState.RUNNING:
+        if self.status() == ServiceState.RUNNING:
             self.restart()
 
     def status(self) -> ServiceStatus:
         if not (self.bin_dir/'steampipe').is_file():
-            self._status = ServiceStatus(
+            _status = ServiceStatus(
                 state=ServiceState.UNKNOWN,
                 reason=f"[WARN] Could not find the steampipe binary at {self.bin_dir}"
             )
-            return self._status
+            return _status
 
         out = subprocess.check_output([self.bin_dir/'steampipe', 'service', 'status', '--install-dir',
                                        str(self.home_dir)])
         if b'NOT running' in out:
-            self._status = ServiceStatus(
+            return ServiceStatus(
                 state=ServiceState.STOPPED,
                 reason=out,
             )
-        elif b'service is now running' in out:
+        elif b'service is running' in out:
             self.set_db(out)
-            self._status = ServiceStatus(
+            return ServiceStatus(
                 state=ServiceState.RUNNING,
                 reason=out,
             )
         else:
-            self._status = ServiceStatus(
+            return ServiceStatus(
                 state=ServiceState.UNKNOWN,
                 reason=f"steampipe is in an unknown state: {out}"
             )
-        return self._status
 
     def restart(self):
         self.stop()
         self.start()
 
     def set_db(self, status_out: bytes):
-        self.database_conn = list(filter(lambda l: b'postgres://steampipe' in l, status_out.splitlines()))
-        self.database_conn = self.database_conn[0].decode().strip()
+        # self.database_conn = list(filter(lambda l: b'postgres://steampipe' in l, status_out.splitlines()))
+        conn = re.search(r'postgres://(\w+@127.0.0.1:\d+/\w+)', status_out.decode())
+        if not conn:
+            raise UnexpectedStateException(ServiceStatus(
+                reason=f"Could not find the database connection string in the output of status: {status_out}",
+                state=ServiceState.UNKNOWN,
+            ))
+        self.database_conn = 'postgresql://' + conn.group(1)
 
         # sqlalchemy expects postgresql:// rather then postgres://
-        database_conn = self.database_conn.replace('postgres', 'postgresql')
-
-        self.engine = create_engine(database_conn)
+        self.engine = create_engine(self.database_conn)
         self.Session = orm.sessionmaker(self.engine)
         self.db = self.Session()
 
     def start(self, **kwargs) -> ServiceStatus:
-        if self.status().state == ServiceState.RUNNING:
+        status = self.status()
+        if status.state == ServiceState.RUNNING:
             print("[WARN] Steampipe was running when we tried to start it. This is most likely a orphaned session. "
                   "It will be shutdown when we exit.", file=sys.stderr)
-            return self._status
+            return status
         else:
             try:
                 out = subprocess.check_output([str(self.bin_dir/'steampipe'), 'service', 'start', '--install-dir',
@@ -274,14 +277,13 @@ class SteamPipe:
                                 f"Output of checking status: {status.reason}\n\n"
                 raise UnexpectedStateException(status)
         atexit.register(self.stop)
-        return self._status
+        return status
 
     def stop(self):
         try:
             subprocess.check_output([self.bin_dir / 'steampipe', 'service', 'stop', '--install-dir', str(self.home_dir),
                                  '--force'])
         except Exception as e:
-            import pdb; pdb.set_trace()
             raise e
 
     def install(self, plugins: List[str] = []):
